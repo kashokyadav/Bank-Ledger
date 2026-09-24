@@ -1,0 +1,15 @@
+10.1  Frontend architecture       → current
+10.2  UI/UX design system
+10.3  Folder + routing setup
+10.4  Authentication pages
+10.5  User layout + dashboard
+10.6  Accounts
+10.7  Money transfer
+10.8  Funding
+10.9  Transactions
+10.10 System dashboard
+10.11 API integration
+10.12 Responsive optimization
+10.13 Animations & smooth effects
+10.14 Final testing + polish (brower tools checking network tab)
+

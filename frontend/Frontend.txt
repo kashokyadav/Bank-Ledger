@@ -1,0 +1,47 @@
+day 1 
+
+                    main.jsx
+                       ↓
+                 AuthProvider
+                       ↓
+                     App
+                       ↓
+                  AppRoutes
+                       ↓
+        ┌──────────────┼──────────────┐
+        ↓              ↓              ↓
+      Public          User          System
+        ↓              ↓              ↓
+   AuthLayout    ProtectedRoute  SystemProtectedRoute
+        ↓              ↓              ↓
+ Login/Register   UserLayout    SystemLayout
+                       ↓              ↓
+                    Outlet          Outlet
+                       ↓              ↓
+                  User Pages     System Pages
+
+
+day 2 
+- > Logout button in the navbar 
+( like laptops Logout button + Symbol and for mobiles only symbol ) 
+     with mail notification of sender and reciver 
+
+
+day 5 - step 4 : 
+transaction between the user to user make more Ux like automatically idempotency key generation
+
+1. Refresh / Authentication persistence
+          ↓
+2. Error & loading handling
+          ↓
+3. Mobile responsive UI
+          ↓
+4. User-side edge-case testing
+          ↓
+5. UI polish
+          ↓
+6. Final user-side completion
+
+
+important topics    
+1. Authentication persistence

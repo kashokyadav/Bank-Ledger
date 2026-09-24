@@ -1,0 +1,18 @@
+what is npm , npx , npm dev , npx nodemon server.js , type script 
+nodemailer
+Gmail Api
+OAuthPlayGround
+smtp server
+destructuring
+why we use populate
+Compass is failing during the TLS/SSL connection to your MongoDB Atlas cluster.
+Good README/documentation
+
+querySrv ECONNREFUSED ===> error 
+SSL alert number 80
+TLSV1_ALERT_INTERNAL_ERROR
+It means MongoDB Compass tried to connect to your MongoDB Atlas database, 
+but the secure TLS/SSL connection failed.
+
+
+ 

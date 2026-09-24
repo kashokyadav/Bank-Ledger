@@ -1,0 +1,591 @@
+============================================================
+                 BANK-LEDGER API DOCUMENTATION
+============================================================
+
+Base URL:
+http://localhost:3000/api
+
+
+============================================================
+AUTH APIs
+============================================================
+
+
+1. USER REGISTER
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Public
+
+METHOD:
+POST
+
+URL:
+http://localhost:3000/api/auth/register
+
+EXPECTED SUCCESS:
+Status: 201 Created
+
+Description:
+New normal user is registered successfully.
+
+EXPECTED ERRORS:
+400 → Invalid or missing user information
+409 → Email already exists
+500 → Server error
+
+
+2. USER LOGIN
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Public
+
+METHOD:
+POST
+
+URL:
+http://localhost:3000/api/auth/login
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Normal user is authenticated successfully.
+
+EXPECTED ERRORS:
+400 → Invalid or missing input
+401 → Invalid email or password
+500 → Server error
+
+
+3. SYSTEM USER LOGIN
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Public
+
+METHOD:
+POST
+
+URL:
+http://localhost:3000/api/auth/system/login
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+System user is authenticated successfully.
+
+EXPECTED ERRORS:
+400 → Invalid or missing input
+401 → Invalid email or password
+500 → Server error
+
+
+4. LOGOUT
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Authenticated User / System User
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/auth/logout
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Currently authenticated user is logged out.
+
+EXPECTED ERRORS:
+401 → Unauthorized / invalid token
+500 → Server error
+
+
+5. GET ALL USERS
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+System User Only
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/auth/system/allusers
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns all normal users in the system.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+403 → User is not a system user
+500 → Server error
+
+
+============================================================
+ACCOUNT APIs
+============================================================
+
+
+6. CREATE ACCOUNT
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Authenticated User
+
+METHOD:
+POST
+
+URL:
+http://localhost:3000/api/accounts
+
+EXPECTED SUCCESS:
+Status: 201 Created
+
+Description:
+Creates a bank account for the authenticated user.
+
+EXPECTED ERRORS:
+400 → Invalid account information
+401 → Unauthorized
+500 → Server error
+
+
+7. GET MY ACCOUNTS
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Authenticated User
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/accounts
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns the accounts associated with the authenticated user.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+404 → Accounts not found
+500 → Server error
+
+
+8. GET MY BALANCE
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Authenticated User
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/accounts/my-balance
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns the current balance of the authenticated user's account.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+404 → Account not found
+500 → Server error
+
+
+9. GET ALL ACCOUNTS
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+System User Only
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/accounts/system/all
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns all accounts in the system.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+403 → User is not a system user
+500 → Server error
+
+
+10. GET SYSTEM BALANCE
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+System User Only
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/accounts/system/balance
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns the current system account balance.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+403 → User is not a system user
+404 → System account not found
+500 → Server error
+
+
+============================================================
+TRANSACTION APIs
+============================================================
+
+
+11. USER → USER TRANSACTION
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Authenticated User
+
+METHOD:
+POST
+
+URL:
+http://localhost:3000/api/transactions
+
+EXPECTED SUCCESS:
+Status: 201 Created
+
+Description:
+Transfers money from the authenticated user's account to
+another active user's account.
+
+EXPECTED ERRORS:
+400 → Invalid input or amount
+401 → Unauthorized
+404 → Receiver account not found
+409 → Duplicate or conflicting idempotency key
+500 → Transaction failed
+
+
+12. GET MY TRANSACTIONS
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Authenticated User
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/transactions
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns transactions associated with the authenticated user.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+500 → Server error
+
+
+13. GET MY TRANSACTION BY ID
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Authenticated User
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/transactions/:transactionId
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns details of a specific transaction accessible to the
+authenticated user.
+
+Example:
+http://localhost:3000/api/transactions/TRANSACTION_ID
+
+EXPECTED ERRORS:
+400 → Invalid transaction ID
+401 → Unauthorized
+404 → Transaction not found
+500 → Server error
+
+
+14. REQUEST DEMO FUNDS
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Authenticated User
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/transactions/demo-funds
+
+EXPECTED SUCCESS:
+Status: 201 Created
+
+Description:
+Requests demo funds for the authenticated user's account.
+
+Rule:
+Maximum ₹500 per user account per day.
+
+EXPECTED ERRORS:
+400 → Funding request is invalid or daily limit reached
+401 → Unauthorized
+404 → Account not found
+500 → Server error
+
+
+15. GET MY INITIAL FUNDS
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+Authenticated User
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/transactions/initial-funds
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns the user's initial funding transaction information.
+
+Rule:
+Initial funding is intended once per new user, maximum ₹1000.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+404 → Initial funding transaction not found
+500 → Server error
+
+
+16. CREATE SYSTEM INITIAL FUNDS
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+System User Only
+
+METHOD:
+POST
+
+URL:
+http://localhost:3000/api/transactions/system/initial-funds
+
+EXPECTED SUCCESS:
+Status: 201 Created
+
+Description:
+Transfers initial funds from the system account to a user's
+account.
+
+Rule:
+Maximum initial funding is ₹1000.
+
+EXPECTED ERRORS:
+400 → Invalid amount or account information
+401 → Unauthorized
+403 → User is not a system user
+404 → Target account not found
+409 → Duplicate idempotency key
+500 → Transaction failed
+
+
+17. GET SYSTEM INITIAL FUNDS
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+System User Only
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/transactions/system/initial-funds
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns system initial-funding transaction information.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+403 → User is not a system user
+500 → Server error
+
+
+18. GET ALL SYSTEM TRANSACTIONS
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+System User Only
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/transactions/system
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns all transactions available to the system user.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+403 → User is not a system user
+500 → Server error
+
+
+19. GET SYSTEM TRANSACTION BY ID
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+System User Only
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/transactions/system/:transactionId
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns complete details of a selected transaction for the
+system user.
+
+Example:
+http://localhost:3000/api/transactions/system/TRANSACTION_ID
+
+EXPECTED ERRORS:
+400 → Invalid transaction ID
+401 → Unauthorized
+403 → User is not a system user
+404 → Transaction not found
+500 → Server error
+
+
+20. GET SYSTEM DASHBOARD
+------------------------------------------------------------
+
+WHO CAN ACCESS:
+System User Only
+
+METHOD:
+GET
+
+URL:
+http://localhost:3000/api/transactions/system/dashboard
+
+EXPECTED SUCCESS:
+Status: 200 OK
+
+Description:
+Returns system dashboard information including system balance,
+users, accounts and transaction statistics.
+
+EXPECTED ERRORS:
+401 → Unauthorized
+403 → User is not a system user
+404 → System account or system user not found
+500 → Server error
+
+
+============================================================
+AUTHORIZATION SUMMARY
+============================================================
+
+PUBLIC:
+- User Register
+- User Login
+- System User Login
+
+AUTHENTICATED USER:
+- Logout
+- Create Account
+- Get My Accounts
+- Get My Balance
+- User → User Transaction
+- Get My Transactions
+- Get My Transaction By ID
+- Request Demo Funds
+- Get My Initial Funds
+
+SYSTEM USER ONLY:
+- Get All Users
+- Get All Accounts
+- Get System Balance
+- Create System Initial Funds
+- Get System Initial Funds
+- Get All System Transactions
+- Get System Transaction By ID
+- Get System Dashboard
+
+
+============================================================
+COMMON STATUS CODES
+============================================================
+
+200 → Success
+201 → Created successfully
+400 → Bad request / invalid input
+401 → Unauthorized
+403 → Forbidden
+404 → Resource not found
+409 → Conflict / duplicate request
+500 → Internal server error
+
+
+============================================================
+IMPORTANT
+============================================================
+
+The backend is the final source of truth for validation,
+authentication, authorization, transaction processing and
+financial rules.
+
+Frontend developers should use the API URL, method and response
+defined by the backend when integrating the React application.
+
+============================================================
+                    END OF DOCUMENT
+============================================================

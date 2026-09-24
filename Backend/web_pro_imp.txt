@@ -1,0 +1,50 @@
+1. Transactions b/w two users
+    Search:
+    [ Ravi ]
+
+            ↓
+
+    ┌──────────────────────────┐
+    │ Ravi                     │
+    │ Account ••••0456         │
+    │                          │
+    │              [Select]    │
+    └──────────────────────────┘
+
+            ↓
+
+    Send ₹1,000 to Ravi?
+
+    [ Cancel ]    [ Confirm ]
+
+            ↓
+
+    Authentication / transaction processing
+
+            ↓
+
+    ✅ ₹1,000 sent successfully
+
+
+
+2. admin/system operation () 
+     in user registration form we  dont show field of SystemUser , System User is only one
+        ┌─────────────────────────────┐
+        │        My Account           │
+        │                             │
+        │ Balance                     │
+        │ ₹0                          │
+        │                             │
+        │ [ Add Demo Money ]          │
+        │ [ Send Money ]              │
+        │ [ Transactions ]            │
+        └─────────────────────────────┘
+
+Why do we need a System User > But for your project, Ashok needs some money to test transfers.
+    So you, as the admin/system user, can give him demo funds.
+    Now Ashok can send money to  others 
+
+
+The normal user should request demo funds, and the backend/system should
+automatically validate the request and transfer funds from the System Account to that user's account.
+    The user should never directly control the System Account.

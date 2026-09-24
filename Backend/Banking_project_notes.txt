@@ -1,0 +1,47 @@
+what  is ledger in banking , how a ledger works in banking, and its importance  , who will use
+Query  
+how banking system works -> 
+banking methods like transation  
+idempotency key
+Aggregation Pipeline
+MongoDB session
+how the Authendication  works like duirng  in   internship
+Good README/documentation 
+
+
+
+problems
+-> what to do if user created two accounts  then the system give 2 initial funds
+in full stack of this project how do we manage all Transactions , what if user balance 0 .
+   how to handle all this problems 
+can we create no of Accounts  with one email 
+
+Google Authendication  ,  type script 
+
+
+backend ledger - frontend - computer networks => full stack 
+Adv Auth -  typescript -git github -  dbms 
+Git/GitHub -> Deployment-> Docker / CI-CD later
+
+                    LEDGER SYSTEM
+                         │
+          ┌──────────────┼──────────────┐
+          ↓              ↓              ↓
+       User A          User B          User C
+          │              │              │
+       Accounts        Accounts        Accounts
+          │              │              │
+      ┌───┴───┐          │          ┌───┴───┐
+      ↓       ↓          ↓          ↓       ↓
+   Account  Account   Account    Account  Account
+      │       │          │          │       │
+   Ledger   Ledger     Ledger     Ledger   Ledger
+      │       │          │          │       │
+Transactions Transactions ...   Transactions
+
+
+
+
+
+!!! $$$ ### %%% ^^^ &&& *** ===--->   Notes  <---=== *** &&& ^^^ ### $$$ !!!
+
