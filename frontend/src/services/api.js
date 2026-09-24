@@ -6,11 +6,11 @@
 //  In this case, the frontend is running on http://localhost:5173, and the backend is running on http://localhost:3000.
 //  By setting withCredentials to true, the frontend is allowed to send cookies along with requests to the backend, enabling session management and authentication.
 
-import axios from "axios"
+import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:3000/api",
+    baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true,
-})
+});
 
-export default api
+export default api;

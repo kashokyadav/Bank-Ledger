@@ -42,7 +42,13 @@ transaction between the user to user make more Ux like automatically idempotency
           ↓
 6. Final user-side completion
 
-
+MongoDB Atlas        ✅ Cloud
+Backend              ✅ Render
+Backend API          ✅ Live
+Frontend             ⏳ Vercel
+Production CORS      ⏳
+Production testing   ⏳
+     
 important topics    
 1. Authentication persistence4
 
