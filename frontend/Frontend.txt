@@ -44,4 +44,43 @@ transaction between the user to user make more Ux like automatically idempotency
 
 
 important topics    
-1. Authentication persistence
+1. Authentication persistence4
+
+
+
+
+PHASE UI-1
+Global Design System
+       ↓
+PHASE UI-2
+Navbar + Sidebar
+       ↓
+PHASE UI-3
+Common Components
+       ↓
+PHASE UI-4
+Dashboard
+       ↓
+PHASE UI-5
+Accounts
+       ↓
+PHASE UI-6
+Send Money
+       ↓
+PHASE UI-7
+Transactions
+       ↓
+PHASE UI-8
+Transaction Details
+       ↓
+PHASE UI-9
+Profile
+       ↓
+PHASE UI-10
+Login + Register
+       ↓
+PHASE UI-11
+Mobile Responsive
+       ↓
+PHASE UI-12
+Final UI Consistency

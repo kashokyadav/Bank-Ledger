@@ -14,6 +14,7 @@ import UserTransactionDetails from "../pages/user/TransactionDetails"
 import SendMoney from "../pages/user/SendMoney"
 import SendMoneyForm from "../pages/user/SendMoneyForm"
 import Profile from "../pages/user/Profile"
+import Funds from "../pages/user/Funds"
 
 import SystemDashboard from "../pages/system/Dashboard"
 import SystemUsers from "../pages/system/Users"
@@ -92,6 +93,11 @@ function AppRoutes() {
                         <Route
                             path="/profile"
                             element={<Profile />}
+                        />
+
+                        <Route
+                            path="/funds"
+                            element={<Funds />}
                         />
 
                     </Route>

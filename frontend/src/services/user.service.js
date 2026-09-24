@@ -49,3 +49,23 @@ export async function getAccountBalance(accountId) {
     const response = await api.get(`/accounts/balance/${accountId}`)
     return response.data
 }
+
+export async function requestInitialFunds() {
+    const response = await api.post("/transactions/request-initial-funds")
+    return response.data
+}
+
+export async function requestDemoFunds(amount) {
+
+    const idempotencyKey = crypto.randomUUID()
+
+    const response = await api.post(
+        "/transactions/request-funds",
+        {
+            amount,
+            idempotencyKey,
+        }
+    )
+
+    return response.data
+}

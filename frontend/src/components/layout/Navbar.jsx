@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { LogOut, ShieldCheck, UserRound } from "lucide-react"
+
 import { useAuth } from "../../context/AuthContext"
 import { logoutUser } from "../../services/auth.service"
 
@@ -26,44 +28,75 @@ function Navbar() {
     }
 
     return (
-        <nav className="flex items-center justify-between border-b bg-white px-6 py-4 shadow-sm">
+        <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur">
 
-            {/* Brand */}
-            <div>
-                <h1 className="text-xl font-bold text-blue-700">
-                    BANK-LEDGER
-                </h1>
+            <div className="flex h-[76px] items-center justify-between px-4 sm:px-6 lg:px-8">
 
-                <p className="text-sm text-slate-500">
-                    Banking Management System
-                </p>
-            </div>
+                {/* Brand */}
+                <div className="flex items-center gap-3">
 
-            {/* User + Logout */}
-            <div className="flex items-center gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
+                        <ShieldCheck size={22} strokeWidth={2.2} />
+                    </div>
 
-                <div className="hidden text-right sm:block">
-                    <p className="text-sm font-semibold text-slate-800">
-                        {user?.name || "User"}
-                    </p>
+                    <div>
+                        <h1 className="text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
+                            BANK-LEDGER
+                        </h1>
 
-                    <p className="text-xs text-slate-500">
-                        User Panel
-                    </p>
+                        <p className="hidden text-xs font-medium text-slate-400 sm:block">
+                            Secure Banking Management
+                        </p>
+                    </div>
+
                 </div>
 
-                <button
-                    type="button"
-                    onClick={handleLogout}
-                    disabled={loading}
-                    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    {loading ? "Logging out..." : "Logout"}
-                </button>
+
+                {/* User Section */}
+                <div className="flex items-center gap-3">
+
+                    {/* User Information */}
+                    <div className="hidden items-center gap-3 sm:flex">
+
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                            <UserRound size={19} />
+                        </div>
+
+                        <div className="text-right">
+                            <p className="text-sm font-semibold text-slate-800">
+                                {user?.name || "User"}
+                            </p>
+
+                            <p className="text-xs text-slate-400">
+                                Personal Account
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    {/* Logout */}
+                    <button
+                        type="button"
+                        onClick={handleLogout}
+                        disabled={loading}
+                        className="group flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
+                    >
+                        <LogOut
+                            size={17}
+                            className="transition-transform group-hover:-translate-x-0.5"
+                        />
+
+                        <span className="hidden sm:inline">
+                            {loading ? "Logging out..." : "Logout"}
+                        </span>
+                    </button>
+
+                </div>
 
             </div>
 
-        </nav>
+        </header>
     )
 }
 
