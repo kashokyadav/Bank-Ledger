@@ -42,7 +42,13 @@ async function userRegisterController(req, res) {
     // Set the token to expire after 1 day
 
 
-    res.cookie("token", token) 
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 24 * 60 * 60 * 1000
+    });
+        
     
     await emailService.sendRegistrationEmail(user.email, user.name);
 
@@ -97,7 +103,12 @@ async function userLoginController(req, res){
         expiresIn: "1d"
     });
 
-    res.cookie("token", token) 
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 24 * 60 * 60 * 1000
+    });    
 
     return res.status(200).json({
         user: {
@@ -130,8 +141,12 @@ async function userLogoutController(req, res) {
         token: token
     })
 
-    res.clearCookie("token")
-
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+    });
+    
     res.status(200).json({
         message: "User logged out successfully"
     })
