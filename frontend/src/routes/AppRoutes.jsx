@@ -4,6 +4,8 @@ import AuthLayout from "../layouts/AuthLayout"
 import UserLayout from "../layouts/UserLayout"
 import SystemLayout from "../layouts/SystemLayout"
 
+import Landing from "../pages/Landing"
+
 import Login from "../pages/auth/Login"
 import Register from "../pages/auth/Register"
 
@@ -35,22 +37,37 @@ function AppRoutes() {
             <Routes>
 
                 {/* =========================
-                    PUBLIC ROUTES
+                    LANDING PAGE
                 ========================== */}
+
+                <Route
+                    path="/"
+                    element={<Landing />}
+                />
+
+
+                {/* =========================
+                    PUBLIC AUTH ROUTES
+                ========================== */}
+
                 <Route element={<GuestRoute />}>
 
                     <Route element={<AuthLayout />}>
+
                         <Route
                             path="/login"
                             element={<Login />}
                         />
+
                         <Route
                             path="/register"
                             element={<Register />}
                         />
+
                     </Route>
 
                 </Route>
+
 
                 {/* =========================
                     USER PROTECTED ROUTES
@@ -80,14 +97,14 @@ function AppRoutes() {
                             element={<UserTransactionDetails />}
                         />
 
-                        <Route 
-                            path="/send-money" 
-                            element={<SendMoney />} 
+                        <Route
+                            path="/send-money"
+                            element={<SendMoney />}
                         />
 
-                        <Route 
-                            path="/send-money/:accountId" 
-                            element={<SendMoneyForm />} 
+                        <Route
+                            path="/send-money/:accountId"
+                            element={<SendMoneyForm />}
                         />
 
                         <Route

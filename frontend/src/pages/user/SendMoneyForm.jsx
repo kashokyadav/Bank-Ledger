@@ -1,398 +1,634 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
-import Card from "../../components/common/Card"
+import {
+    ArrowLeft,
+    Send,
+    WalletCards,
+    UserRound,
+    ShieldCheck,
+    CheckCircle2,
+    AlertCircle,
+    Loader2,
+    IndianRupee,
+} from "lucide-react"
+
+import Button from "../../components/common/Button"
+
 import {
     getRecipientAccounts,
     createTransaction,
 } from "../../services/user.service"
 
+
 function SendMoneyForm() {
+
     const navigate = useNavigate()
+
     const { accountId } = useParams()
 
     const [recipient, setRecipient] = useState(null)
+
     const [amount, setAmount] = useState("")
 
     const [loading, setLoading] = useState(true)
+
     const [sending, setSending] = useState(false)
+
     const [error, setError] = useState("")
+
     const [success, setSuccess] = useState("")
-    const [transaction, setTransaction] = useState(null)
 
-    useEffect(() => {
-        async function fetchRecipient() {
-            try {
-                setLoading(true)
-                setError("")
 
-                const data = await getRecipientAccounts()
+    async function loadRecipient() {
 
-                const selectedRecipient = data.accounts?.find(
-                    (account) => account._id === accountId
+        try {
+
+            setLoading(true)
+
+            setError("")
+
+            const data =
+                await getRecipientAccounts()
+
+            const accounts =
+                data.accounts ||
+                data.recipients ||
+                []
+
+            const selected =
+                accounts.find(
+                    (account) =>
+                        String(account._id) ===
+                        String(accountId)
                 )
 
-                if (!selectedRecipient) {
-                    setError("Recipient account not found.")
-                    return
-                }
-
-                setRecipient(selectedRecipient)
-            } catch (error) {
-                console.error(
-                    "Get Recipient Error:",
-                    error.response?.data || error.message
-                )
+            if (!selected) {
 
                 setError(
-                    error.response?.data?.message ||
-                    "Failed to load recipient."
+                    "Recipient account could not be found."
                 )
-            } finally {
-                setLoading(false)
+
+                return
             }
+
+            setRecipient(selected)
+
+        } catch (error) {
+
+            console.error(
+                "Recipient Error:",
+                error.response?.data ||
+                error.message
+            )
+
+            setError(
+                error.response?.data?.message ||
+                "Failed to load recipient."
+            )
+
+        } finally {
+
+            setLoading(false)
+
+        }
+    }
+
+
+    useEffect(() => {
+
+        if (accountId) {
+            loadRecipient()
         }
 
-        fetchRecipient()
     }, [accountId])
 
 
-    async function handleSendMoney(event) {
+    function getUserName() {
+
+        return (
+            recipient?.user?.name ||
+            recipient?.user?.email ||
+            "Bank User"
+        )
+
+    }
+
+
+    function getUserEmail() {
+
+        return (
+            recipient?.user?.email ||
+            "Personal Account"
+        )
+
+    }
+
+
+    function getShortId(id) {
+
+        if (!id) {
+            return "N/A"
+        }
+
+        const value = String(id)
+
+        return `${value.slice(0, 8)}...${value.slice(-6)}`
+
+    }
+
+
+    function handleAmountChange(event) {
+
+        const value =
+            event.target.value
+
+        if (
+            value === "" ||
+            /^\d*\.?\d{0,2}$/.test(value)
+        ) {
+
+            setAmount(value)
+
+        }
+
+    }
+
+
+    async function handleSubmit(event) {
+
         event.preventDefault()
 
-        if (!amount || Number(amount) <= 0) {
-            setError("Please enter a valid amount.")
+        setError("")
+        setSuccess("")
+
+
+        const numericAmount =
+            Number(amount)
+
+
+        if (
+            !numericAmount ||
+            numericAmount <= 0
+        ) {
+
+            setError(
+                "Please enter a valid amount."
+            )
+
             return
         }
 
+
         try {
+
             setSending(true)
-            setError("")
-            setSuccess("")
 
-            // Generate idempotency key automatically
-            const idempotencyKey = crypto.randomUUID()
 
-            const transactionData = {
-                toAccount: accountId,
-                amount: Number(amount),
-                idempotencyKey: idempotencyKey,
-            }
+            const data =
+                await createTransaction({
+                    toAccount: accountId,
+                    amount: numericAmount,
+                    idempotencyKey:
+                        crypto.randomUUID(),
+                })
 
-            console.log(
-                "Creating Transaction:",
-                transactionData
-            )
-
-            const data = await createTransaction(transactionData)
 
             console.log(
-                "Transaction Response:",
+                "TRANSFER API:",
                 data
             )
 
-            setTransaction(data.transaction)
+
+            setSuccess(
+                data.message ||
+                "Money sent successfully."
+            )
+
 
             setAmount("")
 
 
         } catch (error) {
+
             console.error(
-                "Create Transaction Error:",
-                error.response?.data || error.message
+                "Transfer Error:",
+                error.response?.data ||
+                error.message
             )
 
             setError(
                 error.response?.data?.message ||
-                "Transaction failed. Please try again."
+                "Transfer failed. Please try again."
             )
+
         } finally {
+
             setSending(false)
+
         }
     }
 
 
-    function handleGoBack() {
-        navigate("/send-money")
-    }
-
-
     if (loading) {
+
         return (
-            <Card>
-                <p className="py-6 text-center text-slate-500">
-                    Loading recipient...
-                </p>
-            </Card>
+
+            <div className="space-y-6">
+
+                <div className="h-8 w-40 animate-pulse rounded-lg bg-slate-200" />
+
+                <div className="h-[500px] animate-pulse rounded-3xl bg-slate-200" />
+
+            </div>
+
         )
     }
 
 
     if (error && !recipient) {
-        return (
-            <Card>
-                <div className="space-y-4 py-6 text-center">
 
-                    <p className="text-red-600">
+        return (
+
+            <div className="space-y-6">
+
+                <button
+                    type="button"
+                    onClick={() =>
+                        navigate("/send-money")
+                    }
+                    className="group flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600"
+                >
+
+                    <ArrowLeft
+                        size={18}
+                        className="transition-transform group-hover:-translate-x-1"
+                    />
+
+                    Back to Recipients
+
+                </button>
+
+
+                <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+
+                    <AlertCircle
+                        size={36}
+                        className="mx-auto text-red-600"
+                    />
+
+                    <h2 className="mt-4 text-lg font-bold text-red-700">
+                        Recipient Not Available
+                    </h2>
+
+                    <p className="mt-2 text-sm text-red-600">
                         {error}
                     </p>
 
-                    <button
+                    <Button
                         type="button"
-                        onClick={handleGoBack}
-                        className="rounded-lg border border-slate-300 px-4 py-2 font-semibold text-slate-700 hover:bg-slate-100"
+                        onClick={() =>
+                            navigate("/send-money")
+                        }
+                        className="mt-5"
                     >
-                        Go Back
-                    </button>
+                        Back to Recipients
+                    </Button>
 
                 </div>
-            </Card>
-        )
-    }
-
-
-    if (transaction) {
-        return (
-            <div className="mx-auto max-w-xl space-y-6">
-
-                <Card>
-                    <div className="space-y-6 text-center">
-
-                        <div>
-                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-600">
-                                ✓
-                            </div>
-
-                            <h1 className="mt-4 text-2xl font-bold text-slate-800">
-                                Transaction Successful
-                            </h1>
-
-                            <p className="mt-1 text-sm text-slate-500">
-                                Money has been sent successfully.
-                            </p>
-                        </div>
-
-
-                        {/* Amount */}
-                        <div>
-                            <p className="text-sm text-slate-500">
-                                Amount
-                            </p>
-
-                            <p className="mt-1 text-3xl font-bold text-slate-800">
-                                ₹{Number(transaction.amount).toLocaleString("en-IN")}
-                            </p>
-                        </div>
-
-
-                        {/* Transaction Details */}
-                        <div className="space-y-4 rounded-xl bg-slate-50 p-4 text-left">
-
-                            <div>
-                                <p className="text-sm text-slate-500">
-                                    To
-                                </p>
-
-                                <p className="mt-1 font-semibold text-slate-800">
-                                    {recipient?.user?.name}
-                                </p>
-                            </div>
-
-                            <div>
-                                <p className="text-sm text-slate-500">
-                                    Account
-                                </p>
-
-                                <p className="mt-1 font-semibold text-slate-800">
-                                    ••••••{accountId.slice(-4)}
-                                </p>
-                            </div>
-
-                            <div>
-                                <p className="text-sm text-slate-500">
-                                    Status
-                                </p>
-
-                                <p className="mt-1 font-semibold text-green-600">
-                                    {transaction.status}
-                                </p>
-                            </div>
-
-                            <div>
-                                <p className="text-sm text-slate-500">
-                                    Transaction ID
-                                </p>
-
-                                <p className="mt-1 break-all text-sm font-medium text-slate-700">
-                                    {transaction._id}
-                                </p>
-                            </div>
-
-                        </div>
-
-
-                        {/* Buttons */}
-                        <div className="flex flex-col gap-3 sm:flex-row">
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    navigate(`/transactions/${transaction._id}`)
-                                }
-                                className="flex-1 rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700"
-                            >
-                                View Transaction
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    navigate("/send-money")
-                                }
-                                className="flex-1 rounded-lg border border-slate-300 px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-100"
-                            >
-                                Back to Recipients
-                            </button>
-
-                        </div>
-
-                    </div>
-                </Card>
 
             </div>
+
         )
     }
-
 
 
     return (
-        <div className="mx-auto max-w-xl space-y-6">
 
-            {/* Header */}
+        <div className="mx-auto max-w-3xl space-y-6 sm:space-y-7">
+
+
+            {/* ================================= */}
+            {/* BACK */}
+            {/* ================================= */}
+
+            <button
+                type="button"
+                onClick={() =>
+                    navigate("/send-money")
+                }
+                className="group flex items-center gap-2 text-sm font-semibold text-slate-500 transition-colors hover:text-blue-600"
+            >
+
+                <ArrowLeft
+                    size={18}
+                    className="transition-transform group-hover:-translate-x-1"
+                />
+
+                Back to Recipients
+
+            </button>
+
+
+            {/* ================================= */}
+            {/* HEADER */}
+            {/* ================================= */}
+
             <div>
-                <button
-                    type="button"
-                    onClick={handleGoBack}
-                    className="mb-3 text-sm font-medium text-blue-600 hover:underline"
-                >
-                    ← Back to Recipients
-                </button>
 
-                <h1 className="text-2xl font-bold text-slate-800">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">
                     Send Money
                 </h1>
 
                 <p className="mt-1 text-sm text-slate-500">
-                    Enter the amount you want to send
+                    Review the recipient and enter the amount.
                 </p>
+
             </div>
 
 
-            <Card>
+            {/* ================================= */}
+            {/* MAIN CARD */}
+            {/* ================================= */}
+
+            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+
+
+                {/* Recipient Header */}
+
+                <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-blue-700 p-6 text-white sm:p-8">
+
+
+                    <div className="flex items-center gap-4">
+
+
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-blue-100 backdrop-blur">
+
+                            <UserRound
+                                size={25}
+                            />
+
+                        </div>
+
+
+                        <div className="min-w-0">
+
+                            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-200">
+                                Sending to
+                            </p>
+
+                            <p className="mt-1 truncate text-lg font-bold">
+                                {getUserName()}
+                            </p>
+
+                            <p className="mt-1 truncate text-xs text-blue-200">
+                                {getUserEmail()}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div className="mt-5 flex flex-col gap-2 rounded-xl bg-white/10 p-3 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+
+                        <div className="flex items-center gap-2">
+
+                            <WalletCards
+                                size={15}
+                                className="text-blue-200"
+                            />
+
+                            <span className="text-xs text-blue-200">
+                                Recipient Account
+                            </span>
+
+                        </div>
+
+                        <span className="break-all font-mono text-xs font-semibold text-white sm:text-right">
+
+                            {getShortId(
+                                recipient?._id
+                            )}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                {/* Form */}
 
                 <form
-                    onSubmit={handleSendMoney}
-                    className="space-y-6"
+                    onSubmit={handleSubmit}
+                    className="p-5 sm:p-8"
                 >
 
-                    {/* Recipient */}
-                    <div>
-                        <p className="text-sm text-slate-500">
-                            Sending to
-                        </p>
 
-                        <p className="mt-1 text-lg font-semibold text-slate-800">
-                            {recipient?.user?.name}
-                        </p>
-                    </div>
+                    {/* Success */}
+
+                    {success && (
+
+                        <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+
+                            <div className="flex items-start gap-3">
+
+                                <CheckCircle2
+                                    size={21}
+                                    className="mt-0.5 shrink-0 text-emerald-600"
+                                />
+
+                                <div>
+
+                                    <p className="font-bold text-emerald-700">
+                                        Transfer Successful
+                                    </p>
+
+                                    <p className="mt-1 text-sm leading-5 text-emerald-600">
+                                        {success}
+                                    </p>
+
+                                </div>
+
+                            </div>
 
 
-                    {/* Account */}
-                    <div>
-                        <p className="text-sm text-slate-500">
-                            Account No.
-                        </p>
+                            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
 
-                        <p className="mt-1 font-semibold text-slate-800">
-                            ••••••{accountId.slice(-4)}
-                        </p>
-                    </div>
+                                <Button
+                                    type="button"
+                                    onClick={() =>
+                                        navigate(
+                                            "/transactions"
+                                        )
+                                    }
+                                    className="w-full sm:w-auto"
+                                >
+                                    View Transactions
+                                </Button>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setSuccess("")
+                                    }
+                                    className="w-full rounded-xl border border-emerald-200 px-5 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100 sm:w-auto"
+                                >
+                                    Send Again
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    )}
+
+
+                    {/* Error */}
+
+                    {error && (
+
+                        <div className="mb-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
+
+                            <AlertCircle
+                                size={19}
+                                className="mt-0.5 shrink-0 text-red-600"
+                            />
+
+                            <p className="text-sm leading-5 text-red-700">
+                                {error}
+                            </p>
+
+                        </div>
+
+                    )}
 
 
                     {/* Amount */}
-                    <div className="space-y-2">
+
+                    <div>
+
                         <label
                             htmlFor="amount"
-                            className="text-sm font-medium text-slate-700"
+                            className="text-sm font-bold text-slate-700"
                         >
                             Amount
                         </label>
 
-                        <input
-                            id="amount"
-                            type="number"
-                            min="1"
-                            step="0.01"
-                            placeholder="Enter amount"
-                            value={amount}
-                            onChange={(event) =>
-                                setAmount(event.target.value)
-                            }
-                            className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-                            disabled={sending}
-                            required
+
+                        <div className="relative mt-2">
+
+                            <IndianRupee
+                                size={21}
+                                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                            />
+
+                            <input
+                                id="amount"
+                                name="amount"
+                                type="text"
+                                inputMode="decimal"
+                                value={amount}
+                                onChange={
+                                    handleAmountChange
+                                }
+                                placeholder="0.00"
+                                disabled={sending}
+                                className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-4 pl-11 pr-4 text-2xl font-bold text-slate-800 outline-none transition-all duration-200 placeholder:text-slate-300 focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            />
+
+                        </div>
+
+
+                        <p className="mt-2 text-xs text-slate-400">
+                            Enter the amount you want to transfer.
+                        </p>
+
+                    </div>
+
+
+                    {/* Security */}
+
+                    <div className="mt-6 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+
+                        <ShieldCheck
+                            size={19}
+                            className="mt-0.5 shrink-0 text-blue-600"
                         />
-                    </div>
 
+                        <div>
 
-                    {/* Error */}
-                    {error && (
-                        <p className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-                            {error}
-                        </p>
-                    )}
+                            <p className="text-sm font-semibold text-blue-800">
+                                Secure transaction
+                            </p>
 
+                            <p className="mt-1 text-xs leading-5 text-blue-700">
+                                Your transfer is processed securely
+                                and recorded in the ledger.
+                            </p>
 
-                    {/* Success */}
-                    {success && (
-                        <p className="rounded-lg bg-green-50 p-3 text-sm text-green-600">
-                            {success}
-                        </p>
-                    )}
-
-
-                    {/* Buttons */}
-                    <div className="flex gap-3">
-
-                        <button
-                            type="button"
-                            onClick={handleGoBack}
-                            disabled={sending}
-                            className="flex-1 rounded-lg border border-slate-300 px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            Go Back
-                        </button>
-
-                        <button
-                            type="submit"
-                            disabled={
-                                sending ||
-                                !amount ||
-                                Number(amount) <= 0
-                            }
-                            className="flex-1 rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            {sending ? "Sending..." : "Send Money"}
-                        </button>
+                        </div>
 
                     </div>
+
+
+                    {/* Submit */}
+
+                    <Button
+                        type="submit"
+                        disabled={
+                            sending ||
+                            !amount ||
+                            Number(amount) <= 0
+                        }
+                        className="mt-7 w-full py-3.5"
+                    >
+
+                        {sending ? (
+
+                            <span className="flex items-center justify-center gap-2">
+
+                                <Loader2
+                                    size={19}
+                                    className="animate-spin"
+                                />
+
+                                Processing Transfer...
+
+                            </span>
+
+                        ) : (
+
+                            <span className="flex items-center justify-center gap-2">
+
+                                <Send
+                                    size={18}
+                                />
+
+                                Send {amount
+                                    ? `₹${amount}`
+                                    : "Money"}
+
+                            </span>
+
+                        )}
+
+                    </Button>
+
+
+                    <p className="mt-3 text-center text-xs text-slate-400">
+                        Please verify the recipient before confirming the transfer.
+                    </p>
 
                 </form>
 
-            </Card>
+            </div>
 
         </div>
+
     )
 }
+
 
 export default SendMoneyForm

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+
 import {
     WalletCards,
     Plus,
@@ -7,6 +8,7 @@ import {
     Loader2,
     Copy,
     ShieldCheck,
+    X,
 } from "lucide-react"
 
 import Card from "../../components/common/Card"
@@ -22,7 +24,9 @@ import {
 function UserAccounts() {
 
     const [accounts, setAccounts] = useState([])
+
     const [loading, setLoading] = useState(true)
+
     const [error, setError] = useState("")
 
     const [showCreateForm, setShowCreateForm] = useState(false)
@@ -32,6 +36,7 @@ function UserAccounts() {
     })
 
     const [creating, setCreating] = useState(false)
+
     const [success, setSuccess] = useState("")
 
 
@@ -53,6 +58,7 @@ function UserAccounts() {
         try {
 
             setCreating(true)
+
             setError("")
             setSuccess("")
 
@@ -74,7 +80,8 @@ function UserAccounts() {
 
             setShowCreateForm(false)
 
-            const accountsData = await getMyAccounts()
+            const accountsData =
+                await getMyAccounts()
 
             setAccounts(
                 accountsData.accounts
@@ -101,47 +108,48 @@ function UserAccounts() {
     }
 
 
-    useEffect(() => {
+    async function loadAccounts() {
 
-        async function loadAccounts() {
+        try {
 
-            try {
+            setLoading(true)
 
-                setLoading(true)
-                setError("")
+            setError("")
 
-                const accountsData =
-                    await getMyAccounts()
+            const accountsData =
+                await getMyAccounts()
 
-                console.log(
-                    "ACCOUNTS API:",
-                    accountsData
-                )
+            console.log(
+                "ACCOUNTS API:",
+                accountsData
+            )
 
-                setAccounts(
-                    accountsData.accounts
-                )
+            setAccounts(
+                accountsData.accounts
+            )
 
-            } catch (error) {
+        } catch (error) {
 
-                console.error(
-                    "Accounts API Error:",
-                    error.response?.data ||
-                    error.message
-                )
+            console.error(
+                "Accounts API Error:",
+                error.response?.data ||
+                error.message
+            )
 
-                setError(
-                    error.response?.data?.message ||
-                    "Failed to load accounts."
-                )
+            setError(
+                error.response?.data?.message ||
+                "Failed to load accounts."
+            )
 
-            } finally {
+        } finally {
 
-                setLoading(false)
-
-            }
+            setLoading(false)
 
         }
+    }
+
+
+    useEffect(() => {
 
         loadAccounts()
 
@@ -150,7 +158,9 @@ function UserAccounts() {
 
     function getShortAccountId(id) {
 
-        if (!id) return "N/A"
+        if (!id) {
+            return "N/A"
+        }
 
         return `${id.slice(0, 8)}...${id.slice(-6)}`
     }
@@ -166,46 +176,74 @@ function UserAccounts() {
                 "Account ID copied to clipboard."
             )
 
+            setError("")
+
         } catch {
 
             setError(
                 "Unable to copy account ID."
             )
 
+            setSuccess("")
+
         }
+    }
+
+
+    function openCreateForm() {
+
+        setError("")
+
+        setSuccess("")
+
+        setShowCreateForm(true)
+    }
+
+
+    function closeCreateForm() {
+
+        if (creating) {
+            return
+        }
+
+        setShowCreateForm(false)
+
+        setError("")
     }
 
 
     return (
 
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-7 lg:space-y-8">
 
 
+            {/* ================================= */}
             {/* PAGE HEADER */}
+            {/* ================================= */}
 
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 
-                <div>
+                <div className="flex min-w-0 items-center gap-3">
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm sm:h-12 sm:w-12">
 
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+                        <WalletCards
+                            size={22}
+                            strokeWidth={2}
+                        />
 
-                            <WalletCards size={24} />
+                    </div>
 
-                        </div>
 
-                        <div>
+                    <div className="min-w-0">
 
-                            <h1 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">
-                                My Accounts
-                            </h1>
+                        <h1 className="truncate text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">
+                            My Accounts
+                        </h1>
 
-                            <p className="mt-1 text-sm text-slate-500">
-                                Manage your bank accounts and balances.
-                            </p>
-
-                        </div>
+                        <p className="mt-1 text-sm text-slate-500">
+                            Manage your bank accounts and balances.
+                        </p>
 
                     </div>
 
@@ -214,14 +252,11 @@ function UserAccounts() {
 
                 <Button
                     type="button"
-                    onClick={() => {
-                        setShowCreateForm(true)
-                        setError("")
-                        setSuccess("")
-                    }}
+                    onClick={openCreateForm}
+                    className="w-full sm:w-auto"
                 >
 
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center justify-center gap-2">
 
                         <Plus size={18} />
 
@@ -234,44 +269,48 @@ function UserAccounts() {
             </div>
 
 
+            {/* ================================= */}
             {/* SUCCESS MESSAGE */}
+            {/* ================================= */}
 
             {success && (
 
-                <div className="animate-[fadeIn_0.3s_ease-out] flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+                <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
 
                     <CheckCircle
-                        size={20}
-                        className="mt-0.5 shrink-0"
+                        size={19}
+                        className="mt-0.5 shrink-0 text-emerald-600"
                     />
 
-                    <span className="font-medium">
+                    <p className="text-sm font-medium leading-5 text-emerald-700">
                         {success}
-                    </span>
+                    </p>
 
                 </div>
 
             )}
 
 
+            {/* ================================= */}
             {/* ERROR MESSAGE */}
+            {/* ================================= */}
 
             {error && !loading && (
 
-                <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm">
 
                     <AlertCircle
-                        size={20}
-                        className="mt-0.5 shrink-0"
+                        size={19}
+                        className="mt-0.5 shrink-0 text-red-600"
                     />
 
-                    <div>
+                    <div className="min-w-0">
 
-                        <p className="font-semibold">
+                        <p className="text-sm font-semibold text-red-700">
                             Something went wrong
                         </p>
 
-                        <p className="mt-1">
+                        <p className="mt-1 break-words text-sm leading-5 text-red-600">
                             {error}
                         </p>
 
@@ -282,17 +321,19 @@ function UserAccounts() {
             )}
 
 
-            {/* LOADING */}
+            {/* ================================= */}
+            {/* LOADING SKELETON */}
+            {/* ================================= */}
 
             {loading && (
 
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6">
 
                     {[1, 2].map((item) => (
 
                         <div
                             key={item}
-                            className="h-64 animate-pulse rounded-2xl border border-slate-200 bg-white"
+                            className="h-[360px] animate-pulse rounded-2xl border border-slate-200 bg-white"
                         />
 
                     ))}
@@ -302,7 +343,9 @@ function UserAccounts() {
             )}
 
 
+            {/* ================================= */}
             {/* EMPTY STATE */}
+            {/* ================================= */}
 
             {!loading &&
                 !error &&
@@ -310,30 +353,35 @@ function UserAccounts() {
 
                     <Card>
 
-                        <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+                        <div className="flex flex-col items-center justify-center px-5 py-14 text-center sm:px-8 sm:py-16">
 
                             <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-blue-50 text-blue-600">
 
-                                <WalletCards size={36} />
+                                <WalletCards
+                                    size={36}
+                                />
 
                             </div>
+
 
                             <h2 className="mt-6 text-xl font-bold text-slate-800">
                                 No Accounts Yet
                             </h2>
+
 
                             <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
                                 Create your first BANK-LEDGER account
                                 to start managing your money.
                             </p>
 
+
                             <Button
                                 type="button"
-                                onClick={() => setShowCreateForm(true)}
-                                className="mt-6"
+                                onClick={openCreateForm}
+                                className="mt-6 w-full sm:w-auto"
                             >
 
-                                <span className="flex items-center gap-2">
+                                <span className="flex items-center justify-center gap-2">
 
                                     <Plus size={18} />
 
@@ -350,13 +398,15 @@ function UserAccounts() {
                 )}
 
 
+            {/* ================================= */}
             {/* ACCOUNT CARDS */}
+            {/* ================================= */}
 
             {!loading &&
                 !error &&
                 accounts.length > 0 && (
 
-                    <div className="grid gap-6 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6">
 
                         {accounts.map((account) => (
 
@@ -365,22 +415,33 @@ function UserAccounts() {
                                 className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/50"
                             >
 
-                                {/* Account Top */}
 
-                                <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-blue-700 p-6 text-white">
+                                {/* ============================== */}
+                                {/* BANK CARD HEADER */}
+                                {/* ============================== */}
 
-                                    <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10" />
-
-                                    <div className="absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-white/5" />
+                                <div className="relative min-h-[220px] overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-blue-700 p-5 text-white sm:p-6">
 
 
-                                    <div className="relative">
+                                    {/* Decorative circles */}
 
-                                        <div className="flex items-start justify-between">
+                                    <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-white/10 transition-transform duration-500 group-hover:scale-110" />
+
+                                    <div className="absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-white/5 transition-transform duration-500 group-hover:scale-110" />
+
+
+                                    {/* Card Content */}
+
+                                    <div className="relative flex h-full flex-col justify-between">
+
+
+                                        {/* Top */}
+
+                                        <div className="flex items-start justify-between gap-4">
 
                                             <div>
 
-                                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">
+                                                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-blue-200">
                                                     BANK-LEDGER
                                                 </p>
 
@@ -391,7 +452,7 @@ function UserAccounts() {
                                             </div>
 
 
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur">
+                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 backdrop-blur transition-transform duration-300 group-hover:rotate-6">
 
                                                 <ShieldCheck
                                                     size={21}
@@ -402,36 +463,60 @@ function UserAccounts() {
                                         </div>
 
 
-                                        <div className="mt-8">
+                                        {/* Bottom */}
 
-                                            <p className="text-xs text-blue-200">
-                                                Account ID
-                                            </p>
+                                        <div className="mt-10">
 
-                                            <div className="mt-1 flex items-center gap-2">
+                                            <div className="flex items-end justify-between gap-3">
 
-                                                <p className="break-all font-mono text-sm font-semibold">
+                                                <div className="min-w-0">
 
-                                                    {getShortAccountId(
-                                                        account._id
-                                                    )}
+                                                    <p className="text-[11px] font-medium uppercase tracking-wider text-blue-200">
+                                                        Account ID
+                                                    </p>
 
-                                                </p>
+                                                    <div className="mt-1 flex items-center gap-2">
 
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        copyAccountId(
-                                                            account._id
-                                                        )
-                                                    }
-                                                    className="rounded-lg p-2 text-blue-100 transition hover:bg-white/10 hover:text-white"
-                                                    title="Copy account ID"
-                                                >
+                                                        <p className="break-all font-mono text-sm font-semibold text-white">
+                                                            {getShortAccountId(
+                                                                account._id
+                                                            )}
+                                                        </p>
 
-                                                    <Copy size={15} />
 
-                                                </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                copyAccountId(
+                                                                    account._id
+                                                                )
+                                                            }
+                                                            className="shrink-0 rounded-lg p-2 text-blue-100 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-90"
+                                                            title="Copy account ID"
+                                                        >
+
+                                                            <Copy
+                                                                size={15}
+                                                            />
+
+                                                        </button>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div className="shrink-0 text-right">
+
+                                                    <p className="text-[11px] uppercase tracking-wider text-blue-200">
+                                                        Currency
+                                                    </p>
+
+                                                    <p className="mt-1 text-lg font-bold">
+                                                        {account.currency}
+                                                    </p>
+
+                                                </div>
 
                                             </div>
 
@@ -442,15 +527,21 @@ function UserAccounts() {
                                 </div>
 
 
-                                {/* Account Details */}
+                                {/* ============================== */}
+                                {/* ACCOUNT DETAILS */}
+                                {/* ============================== */}
 
-                                <div className="p-6">
+                                <div className="p-5 sm:p-6">
 
-                                    <div className="grid grid-cols-2 gap-4">
 
-                                        <div className="rounded-2xl bg-slate-50 p-4 transition-colors group-hover:bg-blue-50/60">
+                                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
 
-                                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+
+                                        {/* Currency */}
+
+                                        <div className="rounded-2xl bg-slate-50 p-4 transition-colors duration-200 group-hover:bg-blue-50/60">
+
+                                            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                                                 Currency
                                             </p>
 
@@ -461,16 +552,19 @@ function UserAccounts() {
                                         </div>
 
 
-                                        <div className="rounded-2xl bg-slate-50 p-4 transition-colors group-hover:bg-blue-50/60">
+                                        {/* Status */}
 
-                                            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                        <div className="rounded-2xl bg-slate-50 p-4 transition-colors duration-200 group-hover:bg-blue-50/60">
+
+                                            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                                                 Status
                                             </p>
+
 
                                             <div className="mt-2 flex items-center gap-2">
 
                                                 <span
-                                                    className={`h-2 w-2 rounded-full ${
+                                                    className={`h-2.5 w-2.5 rounded-full ${
                                                         account.status === "ACTIVE"
                                                             ? "bg-emerald-500"
                                                             : account.status === "FROZEN"
@@ -479,7 +573,7 @@ function UserAccounts() {
                                                     }`}
                                                 />
 
-                                                <span className="text-sm font-bold text-slate-800">
+                                                <span className="truncate text-sm font-bold text-slate-800">
                                                     {account.status}
                                                 </span>
 
@@ -490,13 +584,15 @@ function UserAccounts() {
                                     </div>
 
 
+                                    {/* Account Reference */}
+
                                     <div className="mt-5 border-t border-slate-100 pt-5">
 
-                                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                                             Account Reference
                                         </p>
 
-                                        <p className="mt-2 break-all font-mono text-xs text-slate-500">
+                                        <p className="mt-2 break-all font-mono text-xs leading-5 text-slate-500">
                                             {account._id}
                                         </p>
 
@@ -513,37 +609,44 @@ function UserAccounts() {
                 )}
 
 
-            {/* CREATE ACCOUNT */}
+            {/* ================================= */}
+            {/* CREATE ACCOUNT OVERLAY */}
+            {/* ================================= */}
 
             {showCreateForm && (
 
-                <div className="animate-[fadeIn_0.25s_ease-out]">
+                <div className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-950/40 p-0 backdrop-blur-sm sm:items-center sm:p-4">
 
-                    <Card>
 
-                        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                    {/* Modal */}
 
-                            <div>
+                    <div className="max-h-[90vh] w-full overflow-y-auto rounded-t-3xl border border-slate-200 bg-white shadow-2xl sm:max-w-lg sm:rounded-3xl">
 
-                                <div className="flex items-center gap-3">
 
-                                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                        {/* Modal Header */}
 
-                                        <Plus size={21} />
+                        <div className="flex items-start justify-between gap-4 border-b border-slate-100 p-5 sm:p-6">
 
-                                    </div>
+                            <div className="flex min-w-0 items-center gap-3">
 
-                                    <div>
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
 
-                                        <h2 className="text-lg font-bold text-slate-800">
-                                            Create New Account
-                                        </h2>
+                                    <Plus
+                                        size={21}
+                                    />
 
-                                        <p className="mt-1 text-sm text-slate-500">
-                                            Open another account in BANK-LEDGER.
-                                        </p>
+                                </div>
 
-                                    </div>
+
+                                <div className="min-w-0">
+
+                                    <h2 className="text-lg font-bold text-slate-800">
+                                        Create New Account
+                                    </h2>
+
+                                    <p className="mt-1 text-sm text-slate-500">
+                                        Open another BANK-LEDGER account.
+                                    </p>
 
                                 </div>
 
@@ -552,21 +655,26 @@ function UserAccounts() {
 
                             <button
                                 type="button"
-                                onClick={() =>
-                                    setShowCreateForm(false)
-                                }
+                                onClick={closeCreateForm}
                                 disabled={creating}
-                                className="self-end rounded-xl px-3 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 sm:self-auto"
+                                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 transition-all duration-200 hover:bg-slate-100 hover:text-slate-700 active:scale-90 disabled:cursor-not-allowed disabled:opacity-50"
+                                aria-label="Close create account"
                             >
-                                Close
+
+                                <X
+                                    size={20}
+                                />
+
                             </button>
 
                         </div>
 
 
+                        {/* Modal Body */}
+
                         <form
                             onSubmit={handleSubmit}
-                            className="mt-7 max-w-md"
+                            className="p-5 sm:p-6"
                         >
 
                             <Input
@@ -578,20 +686,38 @@ function UserAccounts() {
                             />
 
 
-                            <p className="mt-2 text-xs leading-5 text-slate-400">
-                                Currently supported currency:
-                                <span className="ml-1 font-semibold text-slate-600">
-                                    INR
-                                </span>
-                            </p>
+                            <div className="mt-3 rounded-xl bg-blue-50 p-3">
+
+                                <p className="text-xs leading-5 text-blue-700">
+
+                                    Currently supported currency:
+                                    <span className="ml-1 font-bold">
+                                        INR
+                                    </span>
+
+                                </p>
+
+                            </div>
 
 
-                            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                            {/* Buttons */}
+
+                            <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+
+                                <button
+                                    type="button"
+                                    onClick={closeCreateForm}
+                                    disabled={creating}
+                                    className="w-full rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition-all duration-200 hover:border-slate-300 hover:bg-slate-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                                >
+                                    Cancel
+                                </button>
+
 
                                 <Button
                                     type="submit"
                                     disabled={creating}
-                                    className="sm:min-w-40"
+                                    className="w-full sm:w-auto"
                                 >
 
                                     {creating ? (
@@ -611,7 +737,9 @@ function UserAccounts() {
 
                                         <span className="flex items-center justify-center gap-2">
 
-                                            <Plus size={18} />
+                                            <Plus
+                                                size={18}
+                                            />
 
                                             Create Account
 
@@ -621,23 +749,11 @@ function UserAccounts() {
 
                                 </Button>
 
-
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setShowCreateForm(false)
-                                    }
-                                    disabled={creating}
-                                    className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition-all duration-200 hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    Cancel
-                                </button>
-
                             </div>
 
                         </form>
 
-                    </Card>
+                    </div>
 
                 </div>
 

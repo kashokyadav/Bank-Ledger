@@ -1,13 +1,17 @@
 import { useState } from "react"
+
 import {
     WalletCards,
-    Banknote,
-    CheckCircle,
+    ShieldCheck,
+    Gift,
+    IndianRupee,
+    CheckCircle2,
     AlertCircle,
     Loader2,
+    Info,
+    ArrowRight,
 } from "lucide-react"
 
-import Card from "../../components/common/Card"
 import Button from "../../components/common/Button"
 
 import {
@@ -18,34 +22,37 @@ import {
 
 function Funds() {
 
+    const [demoAmount, setDemoAmount] = useState("")
+
     const [initialLoading, setInitialLoading] = useState(false)
+
     const [demoLoading, setDemoLoading] = useState(false)
 
-    const [amount, setAmount] = useState("")
+    const [success, setSuccess] = useState("")
 
-    const [initialMessage, setInitialMessage] = useState("")
-    const [demoMessage, setDemoMessage] = useState("")
+    const [error, setError] = useState("")
 
-    const [initialError, setInitialError] = useState("")
-    const [demoError, setDemoError] = useState("")
+
+    function clearMessages() {
+
+        setSuccess("")
+        setError("")
+
+    }
 
 
     async function handleInitialFunds() {
 
+        clearMessages()
+
         try {
 
             setInitialLoading(true)
-            setInitialMessage("")
-            setInitialError("")
 
-            const data = await requestInitialFunds()
+            const data =
+                await requestInitialFunds()
 
-            console.log(
-                "INITIAL FUNDS API:",
-                data
-            )
-
-            setInitialMessage(
+            setSuccess(
                 data.message ||
                 "Initial funds added successfully."
             )
@@ -53,13 +60,14 @@ function Funds() {
         } catch (error) {
 
             console.error(
-                "Initial Funds API Error:",
-                error.response?.data || error.message
+                "Initial Funds Error:",
+                error.response?.data ||
+                error.message
             )
 
-            setInitialError(
+            setError(
                 error.response?.data?.message ||
-                "Failed to request initial funds."
+                "Unable to request initial funds."
             )
 
         } finally {
@@ -70,63 +78,78 @@ function Funds() {
     }
 
 
+    function handleDemoAmountChange(event) {
+
+        const value =
+            event.target.value
+
+        if (
+            value === "" ||
+            /^\d*\.?\d{0,2}$/.test(value)
+        ) {
+
+            setDemoAmount(value)
+
+        }
+
+    }
+
+
     async function handleDemoFunds(event) {
 
         event.preventDefault()
 
+        clearMessages()
+
+        const amount =
+            Number(demoAmount)
+
+
+        if (!amount || amount <= 0) {
+
+            setError(
+                "Please enter a valid amount."
+            )
+
+            return
+        }
+
+
+        if (amount > 500) {
+
+            setError(
+                "Demo funds cannot exceed ₹500 per request."
+            )
+
+            return
+        }
+
+
         try {
 
             setDemoLoading(true)
-            setDemoMessage("")
-            setDemoError("")
 
-            const numericAmount = Number(amount)
+            const data =
+                await requestDemoFunds(amount)
 
-            if (!numericAmount || numericAmount <= 0) {
-
-                setDemoError(
-                    "Enter a valid amount."
-                )
-
-                return
-            }
-
-            if (numericAmount > 500) {
-
-                setDemoError(
-                    "Demo funding cannot exceed ₹500."
-                )
-
-                return
-            }
-
-
-            const data = await requestDemoFunds(
-                numericAmount
-            )
-
-            console.log(
-                "DEMO FUNDS API:",
-                data
-            )
-
-            setDemoMessage(
+            setSuccess(
                 data.message ||
                 "Demo funds added successfully."
             )
 
-            setAmount("")
+            setDemoAmount("")
 
         } catch (error) {
 
             console.error(
-                "Demo Funds API Error:",
-                error.response?.data || error.message
+                "Demo Funds Error:",
+                error.response?.data ||
+                error.message
             )
 
-            setDemoError(
+            setError(
                 error.response?.data?.message ||
-                "Failed to request demo funds."
+                "Unable to request demo funds."
             )
 
         } finally {
@@ -139,134 +162,253 @@ function Funds() {
 
     return (
 
-        <div className="space-y-6">
+        <div className="space-y-6 sm:space-y-7 lg:space-y-8">
 
-            {/* Page Header */}
 
-            <div>
+            {/* ================================= */}
+            {/* HEADER */}
+            {/* ================================= */}
 
-                <div className="flex items-center gap-3">
+            <div className="flex items-start gap-3">
 
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm sm:h-12 sm:w-12">
 
-                        <WalletCards size={23} />
+                    <WalletCards
+                        size={22}
+                    />
 
-                    </div>
+                </div>
 
-                    <div>
 
-                        <h1 className="text-2xl font-bold text-slate-800">
-                            Funds
-                        </h1>
+                <div className="min-w-0">
 
-                        <p className="mt-1 text-sm text-slate-500">
-                            Add funds to your BANK-LEDGER account.
-                        </p>
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">
+                        Funds
+                    </h1>
 
-                    </div>
+                    <p className="mt-1 text-sm leading-5 text-slate-500">
+                        Manage your initial and demo account funding.
+                    </p>
 
                 </div>
 
             </div>
 
 
-            {/* Fund Cards */}
+            {/* ================================= */}
+            {/* SECURITY INFO */}
+            {/* ================================= */}
 
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50 p-4 sm:p-5">
+
+                <ShieldCheck
+                    size={20}
+                    className="mt-0.5 shrink-0 text-blue-600"
+                />
+
+                <div>
+
+                    <p className="text-sm font-bold text-blue-800">
+                        Secure Funding
+                    </p>
+
+                    <p className="mt-1 text-xs leading-5 text-blue-700 sm:text-sm">
+
+                        Funding requests are securely processed
+                        through the BANK-LEDGER transaction system.
+
+                    </p>
+
+                </div>
+
+            </div>
 
 
-                {/* Initial Funds */}
+            {/* ================================= */}
+            {/* SUCCESS */}
+            {/* ================================= */}
 
-                <Card>
+            {success && (
 
-                    <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 sm:p-5">
 
-                        <div>
+                    <CheckCircle2
+                        size={20}
+                        className="mt-0.5 shrink-0 text-emerald-600"
+                    />
 
-                            <div className="flex items-center gap-3">
+                    <div className="min-w-0">
 
-                                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+                        <p className="text-sm font-bold text-emerald-700">
+                            Funding Successful
+                        </p>
 
-                                    <Banknote size={22} />
+                        <p className="mt-1 break-words text-sm leading-5 text-emerald-600">
+                            {success}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            )}
+
+
+            {/* ================================= */}
+            {/* ERROR */}
+            {/* ================================= */}
+
+            {error && (
+
+                <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 sm:p-5">
+
+                    <AlertCircle
+                        size={20}
+                        className="mt-0.5 shrink-0 text-red-600"
+                    />
+
+                    <div className="min-w-0">
+
+                        <p className="text-sm font-bold text-red-700">
+                            Funding Request Failed
+                        </p>
+
+                        <p className="mt-1 break-words text-sm leading-5 text-red-600">
+                            {error}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            )}
+
+
+            {/* ================================= */}
+            {/* FUNDING CARDS */}
+            {/* ================================= */}
+
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
+
+
+                {/* ================================= */}
+                {/* INITIAL FUNDS */}
+                {/* ================================= */}
+
+                <div className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/40">
+
+
+                    {/* Card Header */}
+
+                    <div className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 p-6 text-white sm:p-7">
+
+
+                        <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-white/10 transition-transform duration-500 group-hover:scale-110" />
+
+                        <div className="absolute -bottom-16 -left-12 h-40 w-40 rounded-full bg-white/5 transition-transform duration-500 group-hover:scale-110" />
+
+
+                        <div className="relative">
+
+
+                            <div className="flex items-start justify-between gap-4">
+
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+
+                                    <Gift
+                                        size={23}
+                                    />
 
                                 </div>
 
-                                <div>
 
-                                    <h2 className="font-bold text-slate-800">
-                                        Initial Funds
-                                    </h2>
+                                <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-100">
+                                    One Time
+                                </span>
 
-                                    <p className="text-sm text-slate-500">
-                                        One-time account funding
-                                    </p>
+                            </div>
 
-                                </div>
+
+                            <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-blue-200">
+                                Initial Funding
+                            </p>
+
+
+                            <h2 className="mt-1 text-2xl font-extrabold sm:text-3xl">
+                                ₹1,000
+                            </h2>
+
+
+                            <p className="mt-2 max-w-sm text-sm leading-5 text-blue-100">
+                                Get your initial account funding to start
+                                using your BANK-LEDGER account.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {/* Card Body */}
+
+                    <div className="p-5 sm:p-7">
+
+
+                        <div className="space-y-3">
+
+
+                            <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
+
+                                <CheckCircle2
+                                    size={17}
+                                    className="shrink-0 text-emerald-500"
+                                />
+
+                                <span className="text-sm font-medium text-slate-600">
+                                    One-time initial funding
+                                </span>
+
+                            </div>
+
+
+                            <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
+
+                                <CheckCircle2
+                                    size={17}
+                                    className="shrink-0 text-emerald-500"
+                                />
+
+                                <span className="text-sm font-medium text-slate-600">
+                                    Fixed amount of ₹1,000
+                                </span>
+
+                            </div>
+
+
+                            <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
+
+                                <CheckCircle2
+                                    size={17}
+                                    className="shrink-0 text-emerald-500"
+                                />
+
+                                <span className="text-sm font-medium text-slate-600">
+                                    Added directly to your account
+                                </span>
 
                             </div>
 
                         </div>
 
-                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                            ₹1000
-                        </span>
-
-                    </div>
-
-
-                    <div className="mt-6 rounded-xl bg-slate-50 p-4">
-
-                        <p className="text-sm text-slate-600">
-                            Get your initial ₹1000 directly from
-                            the system funding account.
-                        </p>
-
-                    </div>
-
-
-                    {initialMessage && (
-
-                        <div className="mt-4 flex items-start gap-2 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700">
-
-                            <CheckCircle
-                                size={18}
-                                className="mt-0.5 shrink-0"
-                            />
-
-                            <span>
-                                {initialMessage}
-                            </span>
-
-                        </div>
-
-                    )}
-
-
-                    {initialError && (
-
-                        <div className="mt-4 flex items-start gap-2 rounded-xl bg-red-50 p-4 text-sm text-red-700">
-
-                            <AlertCircle
-                                size={18}
-                                className="mt-0.5 shrink-0"
-                            />
-
-                            <span>
-                                {initialError}
-                            </span>
-
-                        </div>
-
-                    )}
-
-
-                    <div className="mt-6">
 
                         <Button
                             type="button"
                             onClick={handleInitialFunds}
-                            disabled={initialLoading}
-                            className="w-full"
+                            disabled={
+                                initialLoading ||
+                                demoLoading
+                            }
+                            className="mt-6 w-full py-3.5"
                         >
 
                             {initialLoading ? (
@@ -284,145 +426,205 @@ function Funds() {
 
                             ) : (
 
-                                "Claim ₹1000 Initial Funds"
+                                <span className="flex items-center justify-center gap-2">
+
+                                    <Gift
+                                        size={18}
+                                    />
+
+                                    Request ₹1,000
+
+                                    <ArrowRight
+                                        size={17}
+                                    />
+
+                                </span>
 
                             )}
 
                         </Button>
 
+
+                        <p className="mt-3 text-center text-[11px] leading-5 text-slate-400">
+                            Available once for an eligible account.
+                        </p>
+
                     </div>
 
-                </Card>
+                </div>
 
 
-                {/* Demo Funds */}
+                {/* ================================= */}
+                {/* DEMO FUNDS */}
+                {/* ================================= */}
 
-                <Card>
+                <div className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-100/40">
 
-                    <div className="flex items-start justify-between">
 
-                        <div>
+                    {/* Card Header */}
 
-                            <div className="flex items-center gap-3">
+                    <div className="relative overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600 p-6 text-white sm:p-7">
 
-                                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
 
-                                    <WalletCards size={22} />
+                        <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-white/10 transition-transform duration-500 group-hover:scale-110" />
+
+                        <div className="absolute -bottom-16 -left-12 h-40 w-40 rounded-full bg-white/5 transition-transform duration-500 group-hover:scale-110" />
+
+
+                        <div className="relative">
+
+
+                            <div className="flex items-start justify-between gap-4">
+
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+
+                                    <IndianRupee
+                                        size={23}
+                                    />
 
                                 </div>
 
-                                <div>
 
-                                    <h2 className="font-bold text-slate-800">
-                                        Demo Funds
-                                    </h2>
-
-                                    <p className="text-sm text-slate-500">
-                                        Temporary testing funds
-                                    </p>
-
-                                </div>
+                                <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-100">
+                                    Demo
+                                </span>
 
                             </div>
 
+
+                            <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-emerald-200">
+                                Demo Funding
+                            </p>
+
+
+                            <h2 className="mt-1 text-2xl font-extrabold sm:text-3xl">
+                                Up to ₹500
+                            </h2>
+
+
+                            <p className="mt-2 max-w-sm text-sm leading-5 text-emerald-100">
+                                Add demo funds for testing transfers
+                                and other banking features.
+                            </p>
+
                         </div>
 
-                        <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                            ₹500 / day
-                        </span>
-
                     </div>
 
 
-                    <div className="mt-6 rounded-xl bg-slate-50 p-4">
-
-                        <p className="text-sm text-slate-600">
-                            Request demo money for testing
-                            transactions.
-                        </p>
-
-                        <p className="mt-2 text-xs font-medium text-slate-500">
-                            Maximum daily funding: ₹500
-                        </p>
-
-                    </div>
-
+                    {/* Card Body */}
 
                     <form
                         onSubmit={handleDemoFunds}
-                        className="mt-6 space-y-4"
+                        className="p-5 sm:p-7"
                     >
 
-                        <div>
 
-                            <label className="mb-2 block text-sm font-semibold text-slate-700">
-                                Amount
-                            </label>
+                        <label
+                            htmlFor="demoAmount"
+                            className="text-sm font-bold text-slate-700"
+                        >
+                            Funding Amount
+                        </label>
 
-                            <div className="relative">
 
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-slate-500">
-                                    ₹
-                                </span>
+                        <div className="relative mt-2">
 
-                                <input
-                                    type="number"
-                                    min="1"
-                                    max="500"
-                                    step="1"
-                                    value={amount}
-                                    onChange={(event) =>
-                                        setAmount(event.target.value)
-                                    }
-                                    placeholder="Enter amount"
-                                    className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-9 pr-4 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-                                />
+                            <IndianRupee
+                                size={20}
+                                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                            />
 
-                            </div>
+                            <input
+                                id="demoAmount"
+                                type="text"
+                                inputMode="decimal"
+                                value={demoAmount}
+                                onChange={
+                                    handleDemoAmountChange
+                                }
+                                placeholder="Enter amount"
+                                disabled={
+                                    demoLoading ||
+                                    initialLoading
+                                }
+                                className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-4 pl-11 pr-4 text-xl font-bold text-slate-800 outline-none transition-all duration-200 placeholder:text-slate-300 focus:border-emerald-400 focus:bg-white focus:ring-4 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            />
 
                         </div>
 
 
-                        {demoMessage && (
+                        {/* Limit */}
 
-                            <div className="flex items-start gap-2 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700">
+                        <div className="mt-3 flex items-start gap-2 rounded-xl bg-emerald-50 p-3">
 
-                                <CheckCircle
-                                    size={18}
-                                    className="mt-0.5 shrink-0"
-                                />
+                            <Info
+                                size={16}
+                                className="mt-0.5 shrink-0 text-emerald-600"
+                            />
 
-                                <span>
-                                    {demoMessage}
+                            <p className="text-xs leading-5 text-emerald-700">
+
+                                Maximum demo funding:
+                                <span className="ml-1 font-bold">
+                                    ₹500 per day
                                 </span>
+
+                            </p>
+
+                        </div>
+
+
+                        {/* Quick amounts */}
+
+                        <div className="mt-5">
+
+                            <p className="text-xs font-semibold text-slate-400">
+                                Quick amount
+                            </p>
+
+
+                            <div className="mt-2 grid grid-cols-3 gap-2">
+
+                                {[100, 250, 500].map(
+                                    (value) => (
+
+                                        <button
+                                            key={value}
+                                            type="button"
+                                            onClick={() =>
+                                                setDemoAmount(
+                                                    String(value)
+                                                )
+                                            }
+                                            disabled={
+                                                demoLoading ||
+                                                initialLoading
+                                            }
+                                            className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-bold text-slate-600 transition-all duration-200 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+
+                                            ₹{value}
+
+                                        </button>
+
+                                    )
+                                )}
 
                             </div>
 
-                        )}
-
-
-                        {demoError && (
-
-                            <div className="flex items-start gap-2 rounded-xl bg-red-50 p-4 text-sm text-red-700">
-
-                                <AlertCircle
-                                    size={18}
-                                    className="mt-0.5 shrink-0"
-                                />
-
-                                <span>
-                                    {demoError}
-                                </span>
-
-                            </div>
-
-                        )}
+                        </div>
 
 
                         <Button
                             type="submit"
-                            disabled={demoLoading}
-                            className="w-full"
+                            disabled={
+                                demoLoading ||
+                                initialLoading ||
+                                !demoAmount ||
+                                Number(demoAmount) <= 0
+                            }
+                            className="mt-6 w-full py-3.5"
                         >
 
                             {demoLoading ? (
@@ -434,26 +636,101 @@ function Funds() {
                                         className="animate-spin"
                                     />
 
-                                    Processing...
+                                    Adding Funds...
 
                                 </span>
 
                             ) : (
 
-                                "Request Demo Funds"
+                                <span className="flex items-center justify-center gap-2">
+
+                                    <WalletCards
+                                        size={18}
+                                    />
+
+                                    Add Demo Funds
+
+                                    <ArrowRight
+                                        size={17}
+                                    />
+
+                                </span>
 
                             )}
 
                         </Button>
 
+
+                        <p className="mt-3 text-center text-[11px] leading-5 text-slate-400">
+                            Demo funds are intended for testing purposes.
+                        </p>
+
                     </form>
 
-                </Card>
+                </div>
+
+            </div>
+
+
+            {/* ================================= */}
+            {/* INFORMATION */}
+            {/* ================================= */}
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+
+                <div className="flex items-start gap-3">
+
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+
+                        <Info
+                            size={19}
+                        />
+
+                    </div>
+
+
+                    <div>
+
+                        <h2 className="text-sm font-bold text-slate-800">
+                            How funding works
+                        </h2>
+
+                        <div className="mt-3 space-y-2 text-xs leading-5 text-slate-500 sm:text-sm">
+
+                            <p>
+                                <span className="font-semibold text-slate-700">
+                                    Initial Funds:
+                                </span>{" "}
+                                One-time ₹1,000 funding for an eligible account.
+                            </p>
+
+                            <p>
+                                <span className="font-semibold text-slate-700">
+                                    Demo Funds:
+                                </span>{" "}
+                                Request an amount for testing, subject to the
+                                daily ₹500 limit.
+                            </p>
+
+                            <p>
+                                <span className="font-semibold text-slate-700">
+                                    Ledger:
+                                </span>{" "}
+                                Funding is recorded as a transaction in the
+                                banking ledger.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
         </div>
     )
 }
+
 
 export default Funds
