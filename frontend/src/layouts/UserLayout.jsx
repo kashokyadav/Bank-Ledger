@@ -4,31 +4,93 @@ import Navbar from "../components/layout/Navbar"
 import Sidebar from "../components/layout/Sidebar"
 import Footer from "../components/layout/Footer"
 
-function UserLayout() {
-    return (
-        <div className="flex min-h-screen flex-col bg-slate-100">
 
-            {/* Navbar */}
+function UserLayout() {
+
+    return (
+
+        // Main application background.
+        <div className="min-h-screen w-full bg-slate-100">
+
+            {/* ==========================================
+                TOP NAVBAR
+            =========================================== */}
+
             <Navbar />
 
-            {/* Sidebar + Main Content */}
-            <div className="flex flex-1">
 
-                {/* Sidebar */}
+            {/* ==========================================
+                SIDEBAR + CONTENT
+            =========================================== */}
+
+            <div className="flex min-w-0">
+
+                {/* --------------------------------------
+                    DESKTOP SIDEBAR
+                --------------------------------------- */}
+
                 <Sidebar />
 
-                {/* Main Content */}
-                <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
-                    <Outlet />
+
+                {/* --------------------------------------
+                    MAIN CONTENT AREA
+                --------------------------------------- */}
+
+                <main
+                    className="
+                        min-w-0
+                        flex-1
+                        overflow-x-hidden
+
+                        /* Mobile screen spacing */
+                        px-6
+                        py-5
+
+                        /* Tablet spacing */
+                        sm:px-7
+                        sm:py-6
+
+                        /* Laptop spacing */
+                        lg:px-8
+                        lg:py-7
+
+                        /* Large desktop spacing */
+                        xl:px-10
+                        xl:py-8
+                    "
+                >
+
+                    {/* ----------------------------------
+                        CONTENT CONTAINER
+                    ----------------------------------- */}
+
+                    <div
+                        className="
+                            mx-auto
+                            w-full
+                            max-w-[1500px]
+                        "
+                    >
+
+                        {/* Page content */}
+                        <Outlet />
+
+                    </div>
+
                 </main>
 
             </div>
 
-            {/* Footer */}
+
+            {/* ==========================================
+                FOOTER
+            =========================================== */}
+
             <Footer />
 
         </div>
     )
 }
+
 
 export default UserLayout

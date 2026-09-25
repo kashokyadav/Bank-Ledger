@@ -6,17 +6,30 @@ function Input({
     onChange,
     name,
     error = "",
+    disabled = false,
+    required = false,
 }) {
-    return (
-        <div className="flex flex-col gap-2">
 
+    return (
+        <div className="flex w-full flex-col gap-2">
+
+            {/* Input label. */}
             <label
                 htmlFor={name}
                 className="text-sm font-semibold text-slate-700"
             >
                 {label}
+
+                {/* Show required indicator when requested. */}
+                {required && (
+                    <span className="ml-1 text-red-500">
+                        *
+                    </span>
+                )}
             </label>
 
+
+            {/* Input field. */}
             <input
                 id={name}
                 name={name}
@@ -24,7 +37,14 @@ function Input({
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
+                disabled={disabled}
+                required={required}
+
+                // Connect the input with its error message.
+                aria-invalid={Boolean(error)}
+
                 className={`
+                    min-h-11
                     w-full
                     rounded-xl
                     border
@@ -34,20 +54,24 @@ function Input({
                     text-sm
                     text-slate-800
                     outline-none
-                    transition
+                    transition-all
+                    duration-200
                     placeholder:text-slate-400
                     focus:bg-white
-                    focus:ring-4
+                    disabled:cursor-not-allowed
+                    disabled:opacity-60
                     ${
                         error
-                            ? "border-red-300 focus:border-red-500 focus:ring-red-100"
-                            : "border-slate-200 focus:border-blue-500 focus:ring-blue-50"
+                            ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                            : "border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
                     }
                 `}
             />
 
+
+            {/* Display validation error when available. */}
             {error && (
-                <p className="text-xs font-medium text-red-600">
+                <p className="text-xs font-medium leading-5 text-red-600">
                     {error}
                 </p>
             )}
@@ -55,5 +79,6 @@ function Input({
         </div>
     )
 }
+
 
 export default Input

@@ -9,14 +9,35 @@ function Footer() {
 
     return (
 
-        <footer className="border-t border-slate-200 bg-white">
+        <footer
+            className="
+                border-t
+                border-slate-200
+                bg-white
+            "
+        >
 
-            <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8">
+            {/* ================================================== */}
+            {/* FOOTER CONTAINER                                   */}
+            {/* ================================================== */}
 
+            <div
+                className="
+                    mx-auto
+                    w-full
+                    max-w-[1600px]
+                    px-3
+                    py-7
+                    sm:px-5
+                    sm:py-8
+                    lg:px-8
+                    xl:px-10
+                "
+            >
 
-                {/* ================================= */}
-                {/* MAIN FOOTER */}
-                {/* ================================= */}
+                {/* ================================================== */}
+                {/* MAIN FOOTER CONTENT                               */}
+                {/* ================================================== */}
 
                 <div
                     className="
@@ -29,9 +50,19 @@ function Footer() {
                     "
                 >
 
-                    {/* BRAND */}
+                    {/* ================================================== */}
+                    {/* BRAND SECTION                                      */}
+                    {/* ================================================== */}
 
-                    <div className="flex items-start gap-3">
+                    <div
+                        className="
+                            flex
+                            items-start
+                            gap-3
+                        "
+                    >
+
+                        {/* Brand Icon */}
 
                         <div
                             className="
@@ -49,18 +80,38 @@ function Footer() {
                             "
                         >
 
-                            <ShieldCheck size={20} />
+                            <ShieldCheck
+                                size={20}
+                                strokeWidth={2.2}
+                            />
 
                         </div>
 
 
-                        <div>
+                        {/* Brand Information */}
 
-                            <p className="text-sm font-bold text-slate-800">
+                        <div className="min-w-0">
+
+                            <p
+                                className="
+                                    text-sm
+                                    font-bold
+                                    tracking-tight
+                                    text-slate-800
+                                "
+                            >
                                 BANK-LEDGER
                             </p>
 
-                            <p className="mt-1 max-w-xs text-xs leading-5 text-slate-500">
+                            <p
+                                className="
+                                    mt-1
+                                    max-w-sm
+                                    text-xs
+                                    leading-5
+                                    text-slate-500
+                                "
+                            >
                                 Secure and simple banking management.
                             </p>
 
@@ -69,13 +120,24 @@ function Footer() {
                     </div>
 
 
-                    {/* SECURITY INFORMATION */}
+                    {/* ================================================== */}
+                    {/* SECURITY INFORMATION                              */}
+                    {/* ================================================== */}
 
-                    <div className="flex flex-wrap gap-3">
+                    <div
+                        className="
+                            flex
+                            flex-wrap
+                            gap-2.5
+                        "
+                    >
+
+                        {/* Secure Badge */}
 
                         <div
                             className="
                                 flex
+                                min-h-10
                                 items-center
                                 gap-2
                                 rounded-xl
@@ -87,21 +149,42 @@ function Footer() {
                             "
                         >
 
-                            <LockKeyhole
-                                size={15}
-                                className="text-blue-600"
-                            />
+                            <div
+                                className="
+                                    flex
+                                    h-6
+                                    w-6
+                                    items-center
+                                    justify-center
+                                    rounded-lg
+                                    bg-blue-100
+                                    text-blue-600
+                                "
+                            >
 
-                            <span className="text-xs font-semibold text-slate-600">
+                                <LockKeyhole size={14} />
+
+                            </div>
+
+                            <span
+                                className="
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                "
+                            >
                                 Secure
                             </span>
 
                         </div>
 
 
+                        {/* Reliable Badge */}
+
                         <div
                             className="
                                 flex
+                                min-h-10
                                 items-center
                                 gap-2
                                 rounded-xl
@@ -113,12 +196,30 @@ function Footer() {
                             "
                         >
 
-                            <CircleCheck
-                                size={15}
-                                className="text-emerald-600"
-                            />
+                            <div
+                                className="
+                                    flex
+                                    h-6
+                                    w-6
+                                    items-center
+                                    justify-center
+                                    rounded-lg
+                                    bg-emerald-100
+                                    text-emerald-600
+                                "
+                            >
 
-                            <span className="text-xs font-semibold text-slate-600">
+                                <CircleCheck size={14} />
+
+                            </div>
+
+                            <span
+                                className="
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                "
+                            >
                                 Reliable
                             </span>
 
@@ -129,16 +230,22 @@ function Footer() {
                 </div>
 
 
-                {/* ================================= */}
-                {/* DIVIDER */}
-                {/* ================================= */}
+                {/* ================================================== */}
+                {/* DIVIDER                                            */}
+                {/* ================================================== */}
 
-                <div className="my-6 border-t border-slate-100" />
+                <div
+                    className="
+                        my-6
+                        border-t
+                        border-slate-100
+                    "
+                />
 
 
-                {/* ================================= */}
-                {/* COPYRIGHT */}
-                {/* ================================= */}
+                {/* ================================================== */}
+                {/* COPYRIGHT SECTION                                  */}
+                {/* ================================================== */}
 
                 <div
                     className="
@@ -153,11 +260,21 @@ function Footer() {
                     "
                 >
 
+                    {/* Copyright */}
+
                     <p>
                         © {new Date().getFullYear()} BANK-LEDGER. All rights reserved.
                     </p>
 
-                    <p>
+
+                    {/* Footer Tagline */}
+
+                    <p
+                        className="
+                            font-medium
+                            text-slate-400
+                        "
+                    >
                         Secure • Reliable • Simple
                     </p>
 
@@ -168,7 +285,7 @@ function Footer() {
         </footer>
 
     )
-
 }
+
 
 export default Footer

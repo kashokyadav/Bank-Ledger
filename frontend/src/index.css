@@ -1,4 +1,14 @@
+/* =========================================================
+   BANK LEDGER - GLOBAL STYLES
+   Phase 1: Production UI / UX
+   ========================================================= */
+
 @import "tailwindcss";
+
+/* =========================================================
+   1. GLOBAL RESET
+   Removes browser default spacing and makes sizing predictable.
+   ========================================================= */
 
 * {
     margin: 0;
@@ -6,17 +16,113 @@
     box-sizing: border-box;
 }
 
+
+/* =========================================================
+   2. ROOT VARIABLES
+   Centralized colors make the entire application consistent.
+   ========================================================= */
+
+:root {
+    /* ---------- Brand Colors ---------- */
+
+    --primary: #2563eb;
+    --primary-dark: #1e3a8a;
+    --primary-light: #dbeafe;
+
+    /* ---------- Background Colors ---------- */
+
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --surface-soft: #f1f5f9;
+
+    /* ---------- Text Colors ---------- */
+
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+
+    /* ---------- Border Colors ---------- */
+
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+
+    /* ---------- Status Colors ---------- */
+
+    --success: #16a34a;
+    --success-light: #dcfce7;
+
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+
+    --info: #2563eb;
+    --info-light: #dbeafe;
+
+    /* ---------- Radius ---------- */
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+
+    /* ---------- Shadows ---------- */
+
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+
+    --shadow-md:
+        0 4px 12px rgba(15, 23, 42, 0.08);
+
+    --shadow-lg:
+        0 10px 30px rgba(15, 23, 42, 0.10);
+}
+
+
+/* =========================================================
+   3. HTML
+   Smooth scrolling for navigation and page transitions.
+   ========================================================= */
+
 html {
     scroll-behavior: smooth;
 }
 
+
+/* =========================================================
+   4. BODY
+   Global background, text color and font.
+   ========================================================= */
+
 body {
     min-width: 320px;
-    background: #f5f7fb;
-    color: #172033;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    background: var(--background);
+    color: var(--text-primary);
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    /* Improves text rendering on modern browsers. */
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Prevents accidental horizontal scrolling. */
+    overflow-x: hidden;
 }
+
+
+/* =========================================================
+   5. FORM ELEMENTS
+   Makes inputs, buttons and other form elements inherit
+   the application's typography.
+   ========================================================= */
 
 button,
 input,
@@ -24,6 +130,12 @@ textarea,
 select {
     font: inherit;
 }
+
+
+/* =========================================================
+   6. BUTTONS
+   Basic cursor behavior.
+   ========================================================= */
 
 button {
     cursor: pointer;
@@ -33,19 +145,78 @@ button:disabled {
     cursor: not-allowed;
 }
 
-::selection {
-    background: #dbeafe;
-    color: #1e3a8a;
+
+/* =========================================================
+   7. INPUT FOCUS
+   Gives keyboard users a clear focus indicator.
+   ========================================================= */
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
 }
 
-/* Scrollbar */
+
+/* =========================================================
+   8. TEXT SELECTION
+   Uses the Bank Ledger primary color.
+   ========================================================= */
+
+::selection {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+
+/* =========================================================
+   9. LINKS
+   Smooth color transition for links.
+   ========================================================= */
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   10. IMAGES
+   Prevents images from overflowing their containers.
+   ========================================================= */
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/* =========================================================
+   11. TABLES
+   Helps tables behave better on smaller screens.
+   ========================================================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+/* =========================================================
+   12. SCROLLBAR
+   Clean and subtle scrollbar for desktop users.
+   ========================================================= */
 
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: var(--surface-soft);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -55,4 +226,37 @@ button:disabled {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+}
+
+
+/* =========================================================
+   13. RESPONSIVE BASE SETTINGS
+   These do not redesign individual pages.
+   Page-specific responsive layouts will be handled later.
+   ========================================================= */
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 640px) {
+    body {
+        font-size: 14px;
+    }
+}
+
+
+/* ---------- Tablet ---------- */
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    body {
+        font-size: 15px;
+    }
+}
+
+
+/* ---------- Laptop / Desktop ---------- */
+
+@media (min-width: 1025px) {
+    body {
+        font-size: 16px;
+    }
 }

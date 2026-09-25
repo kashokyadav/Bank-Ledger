@@ -10,6 +10,8 @@ import {
     Loader2,
     Info,
     ArrowRight,
+    Sparkles,
+    RefreshCw,
 } from "lucide-react"
 
 import Button from "../../components/common/Button"
@@ -20,38 +22,78 @@ import {
 } from "../../services/user.service"
 
 
+// =====================================================
+// FUNDS PAGE
+// =====================================================
+
 function Funds() {
 
+    // -------------------------------------------------
+    // FORM STATE
+    // -------------------------------------------------
+
+    // Store the amount entered for demo funding.
     const [demoAmount, setDemoAmount] = useState("")
 
+
+    // -------------------------------------------------
+    // LOADING STATE
+    // -------------------------------------------------
+
+    // Loading state for initial funding.
     const [initialLoading, setInitialLoading] = useState(false)
 
+    // Loading state for demo funding.
     const [demoLoading, setDemoLoading] = useState(false)
 
+
+    // -------------------------------------------------
+    // MESSAGE STATE
+    // -------------------------------------------------
+
+    // Success message shown after successful funding.
     const [success, setSuccess] = useState("")
 
+    // Error message shown when funding fails.
     const [error, setError] = useState("")
 
 
+    // =================================================
+    // CLEAR MESSAGES
+    // =================================================
+
     function clearMessages() {
 
+        // Remove previous success message.
         setSuccess("")
-        setError("")
 
+        // Remove previous error message.
+        setError("")
     }
 
 
+    // =================================================
+    // REQUEST INITIAL FUNDS
+    // =================================================
+
     async function handleInitialFunds() {
 
+        // Clear old messages before starting.
         clearMessages()
+
 
         try {
 
+            // Start loading state.
             setInitialLoading(true)
 
+
+            // Request initial funds from backend.
             const data =
                 await requestInitialFunds()
 
+
+            // Display backend success message.
             setSuccess(
                 data.message ||
                 "Initial funds added successfully."
@@ -59,12 +101,15 @@ function Funds() {
 
         } catch (error) {
 
+            // Log backend error for debugging.
             console.error(
                 "Initial Funds Error:",
                 error.response?.data ||
                 error.message
             )
 
+
+            // Display useful error message.
             setError(
                 error.response?.data?.message ||
                 "Unable to request initial funds."
@@ -72,39 +117,57 @@ function Funds() {
 
         } finally {
 
+            // Stop loading state.
             setInitialLoading(false)
 
         }
     }
 
 
+    // =================================================
+    // DEMO AMOUNT INPUT
+    // =================================================
+
     function handleDemoAmountChange(event) {
 
+        // Read input value.
         const value =
             event.target.value
 
+
+        // Allow only numbers with maximum two decimal places.
         if (
             value === "" ||
             /^\d*\.?\d{0,2}$/.test(value)
         ) {
 
+            // Update demo amount.
             setDemoAmount(value)
 
         }
-
     }
 
 
+    // =================================================
+    // REQUEST DEMO FUNDS
+    // =================================================
+
     async function handleDemoFunds(event) {
 
+        // Prevent browser form refresh.
         event.preventDefault()
 
+
+        // Clear old messages.
         clearMessages()
 
+
+        // Convert input to number.
         const amount =
             Number(demoAmount)
 
 
+        // Validate amount.
         if (!amount || amount <= 0) {
 
             setError(
@@ -115,6 +178,7 @@ function Funds() {
         }
 
 
+        // Enforce maximum demo funding limit.
         if (amount > 500) {
 
             setError(
@@ -127,26 +191,36 @@ function Funds() {
 
         try {
 
+            // Start demo loading.
             setDemoLoading(true)
 
+
+            // Request demo funds from backend.
             const data =
                 await requestDemoFunds(amount)
 
+
+            // Display backend success message.
             setSuccess(
                 data.message ||
                 "Demo funds added successfully."
             )
 
+
+            // Clear input after success.
             setDemoAmount("")
 
         } catch (error) {
 
+            // Log error for debugging.
             console.error(
                 "Demo Funds Error:",
                 error.response?.data ||
                 error.message
             )
 
+
+            // Display useful error message.
             setError(
                 error.response?.data?.message ||
                 "Unable to request demo funds."
@@ -154,24 +228,29 @@ function Funds() {
 
         } finally {
 
+            // Stop loading.
             setDemoLoading(false)
 
         }
     }
 
 
+    // =================================================
+    // PAGE
+    // =================================================
+
     return (
 
-        <div className="space-y-6 sm:space-y-7 lg:space-y-8">
+        <div className="w-full space-y-6 sm:space-y-7 lg:space-y-8">
 
-
-            {/* ================================= */}
-            {/* HEADER */}
-            {/* ================================= */}
+            {/* =================================================
+                PAGE HEADER
+            ================================================= */}
 
             <div className="flex items-start gap-3">
 
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm sm:h-12 sm:w-12">
+                {/* Header icon */}
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600 sm:h-12 sm:w-12">
 
                     <WalletCards
                         size={22}
@@ -180,14 +259,15 @@ function Funds() {
                 </div>
 
 
+                {/* Header text */}
                 <div className="min-w-0">
 
-                    <h1 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                         Funds
                     </h1>
 
-                    <p className="mt-1 text-sm leading-5 text-slate-500">
-                        Manage your initial and demo account funding.
+                    <p className="mt-1 max-w-xl text-sm leading-6 text-slate-500">
+                        Add initial or demo funds to your BANK-LEDGER account.
                     </p>
 
                 </div>
@@ -195,57 +275,78 @@ function Funds() {
             </div>
 
 
-            {/* ================================= */}
-            {/* SECURITY INFO */}
-            {/* ================================= */}
+            {/* =================================================
+                SECURITY BANNER
+            ================================================= */}
 
-            <div className="flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50 p-4 sm:p-5">
+            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 sm:p-5">
 
-                <ShieldCheck
-                    size={20}
-                    className="mt-0.5 shrink-0 text-blue-600"
-                />
+                <div className="flex items-start gap-3">
 
-                <div>
+                    {/* Security icon */}
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-blue-600 shadow-sm">
 
-                    <p className="text-sm font-bold text-blue-800">
-                        Secure Funding
-                    </p>
+                        <ShieldCheck
+                            size={20}
+                        />
 
-                    <p className="mt-1 text-xs leading-5 text-blue-700 sm:text-sm">
+                    </div>
 
-                        Funding requests are securely processed
-                        through the BANK-LEDGER transaction system.
 
-                    </p>
+                    {/* Security information */}
+                    <div className="min-w-0">
+
+                        <p className="text-sm font-bold text-blue-900">
+                            Secure Funding
+                        </p>
+
+                        <p className="mt-1 text-xs leading-5 text-blue-700 sm:text-sm">
+                            Funding requests are securely processed through
+                            the BANK-LEDGER transaction system.
+                        </p>
+
+                    </div>
 
                 </div>
 
             </div>
 
 
-            {/* ================================= */}
-            {/* SUCCESS */}
-            {/* ================================= */}
+            {/* =================================================
+                SUCCESS MESSAGE
+            ================================================= */}
 
             {success && (
 
-                <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 sm:p-5">
+                <div
+                    role="alert"
+                    className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 sm:p-5"
+                >
 
-                    <CheckCircle2
-                        size={20}
-                        className="mt-0.5 shrink-0 text-emerald-600"
-                    />
+                    <div className="flex items-start gap-3">
 
-                    <div className="min-w-0">
+                        {/* Success icon */}
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-600 shadow-sm">
 
-                        <p className="text-sm font-bold text-emerald-700">
-                            Funding Successful
-                        </p>
+                            <CheckCircle2
+                                size={19}
+                            />
 
-                        <p className="mt-1 break-words text-sm leading-5 text-emerald-600">
-                            {success}
-                        </p>
+                        </div>
+
+
+                        {/* Success content */}
+                        <div className="min-w-0">
+
+                            <p className="text-sm font-bold text-emerald-800">
+                                Funding Successful
+                            </p>
+
+                            <p className="mt-1 break-words text-sm leading-5 text-emerald-700">
+                                {success}
+                            </p>
+
+                        </div>
 
                     </div>
 
@@ -254,28 +355,41 @@ function Funds() {
             )}
 
 
-            {/* ================================= */}
-            {/* ERROR */}
-            {/* ================================= */}
+            {/* =================================================
+                ERROR MESSAGE
+            ================================================= */}
 
             {error && (
 
-                <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 sm:p-5">
+                <div
+                    role="alert"
+                    className="rounded-2xl border border-red-200 bg-red-50 p-4 sm:p-5"
+                >
 
-                    <AlertCircle
-                        size={20}
-                        className="mt-0.5 shrink-0 text-red-600"
-                    />
+                    <div className="flex items-start gap-3">
 
-                    <div className="min-w-0">
+                        {/* Error icon */}
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-red-600 shadow-sm">
 
-                        <p className="text-sm font-bold text-red-700">
-                            Funding Request Failed
-                        </p>
+                            <AlertCircle
+                                size={19}
+                            />
 
-                        <p className="mt-1 break-words text-sm leading-5 text-red-600">
-                            {error}
-                        </p>
+                        </div>
+
+
+                        {/* Error content */}
+                        <div className="min-w-0 flex-1">
+
+                            <p className="text-sm font-bold text-red-800">
+                                Funding Request Failed
+                            </p>
+
+                            <p className="mt-1 break-words text-sm leading-5 text-red-700">
+                                {error}
+                            </p>
+
+                        </div>
 
                     </div>
 
@@ -284,62 +398,61 @@ function Funds() {
             )}
 
 
-            {/* ================================= */}
-            {/* FUNDING CARDS */}
-            {/* ================================= */}
+            {/* =================================================
+                FUNDING OPTIONS
+            ================================================= */}
 
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
 
+                {/* =================================================
+                    INITIAL FUNDING CARD
+                ================================================= */}
 
-                {/* ================================= */}
-                {/* INITIAL FUNDS */}
-                {/* ================================= */}
+                <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:border-blue-200 hover:shadow-lg">
 
-                <div className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/40">
+                    {/* Card header */}
+                    <div className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 p-5 text-white sm:p-6">
 
+                        {/* Decorative circle */}
+                        <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-white/10" />
 
-                    {/* Card Header */}
-
-                    <div className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 p-6 text-white sm:p-7">
-
-
-                        <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-white/10 transition-transform duration-500 group-hover:scale-110" />
-
-                        <div className="absolute -bottom-16 -left-12 h-40 w-40 rounded-full bg-white/5 transition-transform duration-500 group-hover:scale-110" />
-
-
+                        {/* Header content */}
                         <div className="relative">
-
 
                             <div className="flex items-start justify-between gap-4">
 
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+                                {/* Icon */}
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15">
 
                                     <Gift
-                                        size={23}
+                                        size={22}
                                     />
 
                                 </div>
 
 
-                                <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-100">
+                                {/* Badge */}
+                                <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-blue-100">
                                     One Time
                                 </span>
 
                             </div>
 
 
-                            <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-blue-200">
+                            {/* Label */}
+                            <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-200">
                                 Initial Funding
                             </p>
 
 
-                            <h2 className="mt-1 text-2xl font-extrabold sm:text-3xl">
+                            {/* Amount */}
+                            <h2 className="mt-1 text-3xl font-extrabold tracking-tight">
                                 ₹1,000
                             </h2>
 
 
-                            <p className="mt-2 max-w-sm text-sm leading-5 text-blue-100">
+                            {/* Description */}
+                            <p className="mt-2 max-w-sm text-sm leading-6 text-blue-100">
                                 Get your initial account funding to start
                                 using your BANK-LEDGER account.
                             </p>
@@ -349,58 +462,28 @@ function Funds() {
                     </div>
 
 
-                    {/* Card Body */}
+                    {/* Card body */}
+                    <div className="p-5 sm:p-6">
 
-                    <div className="p-5 sm:p-7">
+                        {/* Benefits */}
+                        <div className="space-y-2.5">
 
+                            <Benefit
+                                text="One-time initial funding"
+                            />
 
-                        <div className="space-y-3">
+                            <Benefit
+                                text="Fixed amount of ₹1,000"
+                            />
 
-
-                            <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
-
-                                <CheckCircle2
-                                    size={17}
-                                    className="shrink-0 text-emerald-500"
-                                />
-
-                                <span className="text-sm font-medium text-slate-600">
-                                    One-time initial funding
-                                </span>
-
-                            </div>
-
-
-                            <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
-
-                                <CheckCircle2
-                                    size={17}
-                                    className="shrink-0 text-emerald-500"
-                                />
-
-                                <span className="text-sm font-medium text-slate-600">
-                                    Fixed amount of ₹1,000
-                                </span>
-
-                            </div>
-
-
-                            <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
-
-                                <CheckCircle2
-                                    size={17}
-                                    className="shrink-0 text-emerald-500"
-                                />
-
-                                <span className="text-sm font-medium text-slate-600">
-                                    Added directly to your account
-                                </span>
-
-                            </div>
+                            <Benefit
+                                text="Added directly to your account"
+                            />
 
                         </div>
 
 
+                        {/* Action button */}
                         <Button
                             type="button"
                             onClick={handleInitialFunds}
@@ -408,7 +491,7 @@ function Funds() {
                                 initialLoading ||
                                 demoLoading
                             }
-                            className="mt-6 w-full py-3.5"
+                            className="mt-6 w-full"
                         >
 
                             {initialLoading ? (
@@ -445,64 +528,65 @@ function Funds() {
                         </Button>
 
 
+                        {/* Helper text */}
                         <p className="mt-3 text-center text-[11px] leading-5 text-slate-400">
                             Available once for an eligible account.
                         </p>
 
                     </div>
 
-                </div>
+                </section>
 
 
-                {/* ================================= */}
-                {/* DEMO FUNDS */}
-                {/* ================================= */}
+                {/* =================================================
+                    DEMO FUNDING CARD
+                ================================================= */}
 
-                <div className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-100/40">
+                <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:border-emerald-200 hover:shadow-lg">
 
+                    {/* Card header */}
+                    <div className="relative overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600 p-5 text-white sm:p-6">
 
-                    {/* Card Header */}
+                        {/* Decorative circle */}
+                        <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-white/10" />
 
-                    <div className="relative overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600 p-6 text-white sm:p-7">
-
-
-                        <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-white/10 transition-transform duration-500 group-hover:scale-110" />
-
-                        <div className="absolute -bottom-16 -left-12 h-40 w-40 rounded-full bg-white/5 transition-transform duration-500 group-hover:scale-110" />
-
-
+                        {/* Header content */}
                         <div className="relative">
-
 
                             <div className="flex items-start justify-between gap-4">
 
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+                                {/* Icon */}
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15">
 
                                     <IndianRupee
-                                        size={23}
+                                        size={22}
                                     />
 
                                 </div>
 
 
-                                <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-100">
+                                {/* Badge */}
+                                <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100">
                                     Demo
                                 </span>
 
                             </div>
 
 
-                            <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-emerald-200">
+                            {/* Label */}
+                            <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-200">
                                 Demo Funding
                             </p>
 
 
-                            <h2 className="mt-1 text-2xl font-extrabold sm:text-3xl">
+                            {/* Amount */}
+                            <h2 className="mt-1 text-3xl font-extrabold tracking-tight">
                                 Up to ₹500
                             </h2>
 
 
-                            <p className="mt-2 max-w-sm text-sm leading-5 text-emerald-100">
+                            {/* Description */}
+                            <p className="mt-2 max-w-sm text-sm leading-6 text-emerald-100">
                                 Add demo funds for testing transfers
                                 and other banking features.
                             </p>
@@ -512,14 +596,13 @@ function Funds() {
                     </div>
 
 
-                    {/* Card Body */}
-
+                    {/* Demo form */}
                     <form
                         onSubmit={handleDemoFunds}
-                        className="p-5 sm:p-7"
+                        className="p-5 sm:p-6"
                     >
 
-
+                        {/* Input label */}
                         <label
                             htmlFor="demoAmount"
                             className="text-sm font-bold text-slate-700"
@@ -528,12 +611,15 @@ function Funds() {
                         </label>
 
 
+                        {/* Amount input */}
                         <div className="relative mt-2">
 
+                            {/* Rupee icon */}
                             <IndianRupee
-                                size={20}
+                                size={19}
                                 className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                             />
+
 
                             <input
                                 id="demoAmount"
@@ -548,15 +634,36 @@ function Funds() {
                                     demoLoading ||
                                     initialLoading
                                 }
-                                className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-4 pl-11 pr-4 text-xl font-bold text-slate-800 outline-none transition-all duration-200 placeholder:text-slate-300 focus:border-emerald-400 focus:bg-white focus:ring-4 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="
+                                    min-h-12
+                                    w-full
+                                    rounded-xl
+                                    border
+                                    border-slate-200
+                                    bg-slate-50
+                                    py-3
+                                    pl-11
+                                    pr-4
+                                    text-lg
+                                    font-bold
+                                    text-slate-800
+                                    outline-none
+                                    transition
+                                    placeholder:text-slate-300
+                                    focus:border-emerald-400
+                                    focus:bg-white
+                                    focus:ring-4
+                                    focus:ring-emerald-100
+                                    disabled:cursor-not-allowed
+                                    disabled:opacity-60
+                                "
                             />
 
                         </div>
 
 
-                        {/* Limit */}
-
-                        <div className="mt-3 flex items-start gap-2 rounded-xl bg-emerald-50 p-3">
+                        {/* Limit information */}
+                        <div className="mt-3 flex items-start gap-2 rounded-xl border border-emerald-100 bg-emerald-50 p-3">
 
                             <Info
                                 size={16}
@@ -566,8 +673,9 @@ function Funds() {
                             <p className="text-xs leading-5 text-emerald-700">
 
                                 Maximum demo funding:
+
                                 <span className="ml-1 font-bold">
-                                    ₹500 per day
+                                    ₹500 per request
                                 </span>
 
                             </p>
@@ -576,7 +684,6 @@ function Funds() {
 
 
                         {/* Quick amounts */}
-
                         <div className="mt-5">
 
                             <p className="text-xs font-semibold text-slate-400">
@@ -601,7 +708,25 @@ function Funds() {
                                                 demoLoading ||
                                                 initialLoading
                                             }
-                                            className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-bold text-slate-600 transition-all duration-200 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                            className="
+                                                min-h-10
+                                                rounded-xl
+                                                border
+                                                border-slate-200
+                                                bg-white
+                                                px-3
+                                                py-2
+                                                text-xs
+                                                font-bold
+                                                text-slate-600
+                                                transition
+                                                hover:border-emerald-300
+                                                hover:bg-emerald-50
+                                                hover:text-emerald-700
+                                                active:scale-[0.97]
+                                                disabled:cursor-not-allowed
+                                                disabled:opacity-50
+                                            "
                                         >
 
                                             ₹{value}
@@ -616,6 +741,7 @@ function Funds() {
                         </div>
 
 
+                        {/* Submit button */}
                         <Button
                             type="submit"
                             disabled={
@@ -624,7 +750,7 @@ function Funds() {
                                 !demoAmount ||
                                 Number(demoAmount) <= 0
                             }
-                            className="mt-6 w-full py-3.5"
+                            className="mt-6 w-full"
                         >
 
                             {demoLoading ? (
@@ -661,25 +787,27 @@ function Funds() {
                         </Button>
 
 
+                        {/* Helper text */}
                         <p className="mt-3 text-center text-[11px] leading-5 text-slate-400">
                             Demo funds are intended for testing purposes.
                         </p>
 
                     </form>
 
-                </div>
+                </section>
 
             </div>
 
 
-            {/* ================================= */}
-            {/* INFORMATION */}
-            {/* ================================= */}
+            {/* =================================================
+                HOW FUNDING WORKS
+            ================================================= */}
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
 
                 <div className="flex items-start gap-3">
 
+                    {/* Information icon */}
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
 
                         <Info
@@ -689,13 +817,15 @@ function Funds() {
                     </div>
 
 
-                    <div>
+                    {/* Information content */}
+                    <div className="min-w-0">
 
                         <h2 className="text-sm font-bold text-slate-800">
                             How funding works
                         </h2>
 
-                        <div className="mt-3 space-y-2 text-xs leading-5 text-slate-500 sm:text-sm">
+
+                        <div className="mt-3 space-y-2.5 text-xs leading-5 text-slate-500 sm:text-sm">
 
                             <p>
                                 <span className="font-semibold text-slate-700">
@@ -704,20 +834,22 @@ function Funds() {
                                 One-time ₹1,000 funding for an eligible account.
                             </p>
 
+
                             <p>
                                 <span className="font-semibold text-slate-700">
                                     Demo Funds:
                                 </span>{" "}
-                                Request an amount for testing, subject to the
-                                daily ₹500 limit.
+                                Request an amount for testing, subject to
+                                the ₹500 request limit.
                             </p>
+
 
                             <p>
                                 <span className="font-semibold text-slate-700">
                                     Ledger:
                                 </span>{" "}
-                                Funding is recorded as a transaction in the
-                                banking ledger.
+                                Funding is recorded as a transaction in
+                                the banking ledger.
                             </p>
 
                         </div>
@@ -726,7 +858,59 @@ function Funds() {
 
                 </div>
 
+            </section>
+
+
+            {/* =================================================
+                BOTTOM SECURITY
+            ================================================= */}
+
+            <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+
+                {/* Security icon */}
+                <ShieldCheck
+                    size={18}
+                    className="mt-0.5 shrink-0 text-emerald-600"
+                />
+
+
+                {/* Security message */}
+                <p className="text-xs leading-5 text-slate-500 sm:text-sm">
+                    Funding actions are processed through your authenticated
+                    BANK-LEDGER session.
+                </p>
+
             </div>
+
+        </div>
+    )
+}
+
+
+// =====================================================
+// BENEFIT ITEM
+// =====================================================
+
+function Benefit({ text }) {
+
+    return (
+
+        <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 px-3.5 py-3">
+
+            {/* Check icon */}
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+
+                <CheckCircle2
+                    size={16}
+                />
+
+            </div>
+
+
+            {/* Benefit text */}
+            <span className="text-sm font-medium text-slate-600">
+                {text}
+            </span>
 
         </div>
     )

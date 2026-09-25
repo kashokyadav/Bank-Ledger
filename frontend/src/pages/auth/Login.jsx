@@ -17,39 +17,72 @@ import { useAuth } from "../../context/AuthContext"
 
 function Login() {
 
+    // ======================================================
+    // ROUTER + AUTH
+    // ======================================================
+
     const navigate = useNavigate()
+
     const { login } = useAuth()
+
+
+    // ======================================================
+    // FORM STATE
+    // ======================================================
 
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     })
 
+
+    // Controls password visibility.
     const [showPassword, setShowPassword] = useState(false)
+
+    // Controls login button loading state.
     const [loading, setLoading] = useState(false)
+
+    // Stores API/validation error messages.
     const [error, setError] = useState("")
 
+
+    // ======================================================
+    // HANDLE INPUT CHANGE
+    // ======================================================
 
     function handleChange(event) {
 
         const { name, value } = event.target
 
+        // Update only the changed field.
         setFormData((previous) => ({
             ...previous,
             [name]: value,
         }))
 
+        // Remove old error when user starts correcting input.
         if (error) {
             setError("")
         }
     }
 
 
+    // ======================================================
+    // HANDLE LOGIN
+    // ======================================================
+
     async function handleSubmit(event) {
 
+        // Prevent browser page refresh.
         event.preventDefault()
 
+        // Clear previous error.
         setError("")
+
+
+        // ----------------------------------------------
+        // Basic validation
+        // ----------------------------------------------
 
         if (!formData.email.trim()) {
             setError("Please enter your email address.")
@@ -64,120 +97,167 @@ function Login() {
 
         try {
 
+            // Start loading state.
             setLoading(true)
 
+            // Send login request to backend.
             const data = await loginUser(formData)
 
+            // Store authenticated user in auth context.
             login(data.user)
 
+            // Redirect to dashboard after successful login.
             navigate("/dashboard")
 
         } catch (error) {
 
+            // Get backend error message when available.
             const message =
                 error?.response?.data?.message ||
                 "Unable to sign in. Please check your credentials and try again."
 
+            // Display error to user.
             setError(message)
 
         } finally {
 
+            // Stop loading state.
             setLoading(false)
 
         }
     }
 
 
+    // ======================================================
+    // UI
+    // ======================================================
+
     return (
-        <div className="
-            min-h-screen
-            bg-slate-50
-            px-4
-            py-6
-            sm:px-6
-            sm:py-10
-            lg:px-8
-        ">
 
-            {/* Background */}
-
-            <div className="
-                pointer-events-none
-                fixed
-                left-1/2
-                top-0
-                -z-0
-                h-72
-                w-72
-                -translate-x-1/2
-                rounded-full
-                bg-blue-100/60
-                blur-3xl
-                sm:h-96
-                sm:w-96
-            " />
-
-
-            <div className="
-                relative
-                z-10
-                mx-auto
+        <div
+            className="
                 flex
-                min-h-[calc(100vh-3rem)]
-                w-full
-                max-w-md
-                flex-col
+                min-h-[calc(100vh-72px)]
+                items-center
                 justify-center
-            ">
+                bg-slate-50
+                px-4
+                py-8
+                sm:px-6
+                sm:py-10
+                lg:px-8
+            "
+        >
 
-                {/* Logo */}
+            {/* ================================================== */}
+            {/* BACKGROUND DECORATION                              */}
+            {/* ================================================== */}
 
-                <div className="mb-7 text-center">
+            <div
+                className="
+                    pointer-events-none
+                    fixed
+                    left-1/2
+                    top-0
+                    -z-0
+                    h-64
+                    w-64
+                    -translate-x-1/2
+                    rounded-full
+                    bg-blue-100/60
+                    blur-3xl
+                    sm:h-96
+                    sm:w-96
+                "
+            />
+
+
+            {/* ================================================== */}
+            {/* LOGIN CONTAINER                                    */}
+            {/* ================================================== */}
+
+            <div
+                className="
+                    relative
+                    z-10
+                    w-full
+                    max-w-md
+                "
+            >
+
+                {/* ================================================== */}
+                {/* BRAND                                              */}
+                {/* ================================================== */}
+
+                <div
+                    className="
+                        mb-6
+                        flex
+                        justify-center
+                    "
+                >
 
                     <Link
                         to="/"
                         className="
-                            inline-flex
+                            group
+                            flex
                             items-center
                             gap-3
                         "
                     >
 
-                        <div className="
-                            flex
-                            h-11
-                            w-11
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-blue-600
-                            text-white
-                            shadow-lg
-                            shadow-blue-200
-                        ">
+                        {/* Logo */}
+
+                        <div
+                            className="
+                                flex
+                                h-11
+                                w-11
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-xl
+                                bg-blue-600
+                                text-white
+                                shadow-md
+                                shadow-blue-200
+                                transition
+                                duration-200
+                                group-hover:bg-blue-700
+                            "
+                        >
+
                             <ShieldCheck
                                 size={22}
                                 strokeWidth={2.3}
                             />
+
                         </div>
 
 
+                        {/* Brand */}
+
                         <div className="text-left">
 
-                            <p className="
-                                text-sm
-                                font-extrabold
-                                tracking-[0.14em]
-                                text-slate-900
-                            ">
+                            <p
+                                className="
+                                    text-sm
+                                    font-extrabold
+                                    tracking-[0.14em]
+                                    text-slate-900
+                                "
+                            >
                                 BANK-LEDGER
                             </p>
 
-                            <p className="
-                                text-[11px]
-                                font-medium
-                                text-slate-400
-                            ">
+                            <p
+                                className="
+                                    text-[11px]
+                                    font-medium
+                                    text-slate-400
+                                "
+                            >
                                 Modern digital banking
                             </p>
 
@@ -188,91 +268,121 @@ function Login() {
                 </div>
 
 
-                {/* Login card */}
+                {/* ================================================== */}
+                {/* LOGIN CARD                                         */}
+                {/* ================================================== */}
 
-                <div className="
-                    rounded-3xl
-                    border
-                    border-slate-200
-                    bg-white
-                    p-5
-                    shadow-xl
-                    shadow-slate-200/60
-                    sm:p-7
-                ">
+                <div
+                    className="
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-white
+                        p-5
+                        shadow-lg
+                        shadow-slate-200/60
+                        sm:rounded-3xl
+                        sm:p-7
+                    "
+                >
 
-                    {/* Heading */}
+                    {/* ================================================== */}
+                    {/* HEADING                                            */}
+                    {/* ================================================== */}
 
-                    <div className="mb-7">
+                    <div className="mb-6">
 
-                        <div className="
-                            mb-4
-                            flex
-                            h-11
-                            w-11
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-blue-50
-                            text-blue-600
-                        ">
+                        {/* Lock Icon */}
+
+                        <div
+                            className="
+                                mb-4
+                                flex
+                                h-11
+                                w-11
+                                items-center
+                                justify-center
+                                rounded-xl
+                                bg-blue-50
+                                text-blue-600
+                            "
+                        >
+
                             <LockKeyhole size={21} />
+
                         </div>
 
 
-                        <h1 className="
-                            text-2xl
-                            font-black
-                            tracking-tight
-                            text-slate-900
-                            sm:text-3xl
-                        ">
+                        <h1
+                            className="
+                                text-2xl
+                                font-black
+                                tracking-tight
+                                text-slate-900
+                                sm:text-3xl
+                            "
+                        >
                             Welcome back
                         </h1>
 
 
-                        <p className="
-                            mt-2
-                            text-sm
-                            leading-6
-                            text-slate-500
-                        ">
+                        <p
+                            className="
+                                mt-2
+                                text-sm
+                                leading-6
+                                text-slate-500
+                            "
+                        >
                             Sign in to access your BANK-LEDGER account.
                         </p>
 
                     </div>
 
 
-                    {/* Error */}
+                    {/* ================================================== */}
+                    {/* ERROR MESSAGE                                      */}
+                    {/* ================================================== */}
 
                     {error && (
 
-                        <div className="
-                            mb-5
-                            flex
-                            items-start
-                            gap-3
-                            rounded-xl
-                            border
-                            border-red-200
-                            bg-red-50
-                            p-3.5
-                        ">
+                        <div
+                            role="alert"
+                            className="
+                                mb-5
+                                flex
+                                items-start
+                                gap-3
+                                rounded-xl
+                                border
+                                border-red-200
+                                bg-red-50
+                                p-3.5
+                            "
+                        >
 
-                            <div className="
-                                mt-0.5
-                                h-2
-                                w-2
-                                shrink-0
-                                rounded-full
-                                bg-red-500
-                            " />
+                            {/* Error Indicator */}
 
-                            <p className="
-                                text-sm
-                                leading-5
-                                text-red-700
-                            ">
+                            <span
+                                className="
+                                    mt-1.5
+                                    h-2
+                                    w-2
+                                    shrink-0
+                                    rounded-full
+                                    bg-red-500
+                                "
+                            />
+
+                            {/* Error Text */}
+
+                            <p
+                                className="
+                                    text-sm
+                                    leading-5
+                                    text-red-700
+                                "
+                            >
                                 {error}
                             </p>
 
@@ -281,14 +391,18 @@ function Login() {
                     )}
 
 
-                    {/* Form */}
+                    {/* ================================================== */}
+                    {/* LOGIN FORM                                         */}
+                    {/* ================================================== */}
 
                     <form
                         onSubmit={handleSubmit}
                         className="space-y-5"
                     >
 
-                        {/* Email */}
+                        {/* ================================================== */}
+                        {/* EMAIL                                               */}
+                        {/* ================================================== */}
 
                         <div>
 
@@ -308,6 +422,8 @@ function Login() {
 
                             <div className="relative">
 
+                                {/* Email Icon */}
+
                                 <Mail
                                     size={18}
                                     className="
@@ -320,6 +436,8 @@ function Login() {
                                     "
                                 />
 
+
+                                {/* Email Input */}
 
                                 <input
                                     id="email"
@@ -342,11 +460,13 @@ function Login() {
                                         text-sm
                                         text-slate-800
                                         outline-none
-                                        transition
+                                        transition-all
                                         placeholder:text-slate-400
+                                        hover:border-slate-300
                                         focus:border-blue-500
                                         focus:ring-4
                                         focus:ring-blue-50
+                                        disabled:cursor-not-allowed
                                         disabled:bg-slate-50
                                     "
                                 />
@@ -356,32 +476,29 @@ function Login() {
                         </div>
 
 
-                        {/* Password */}
+                        {/* ================================================== */}
+                        {/* PASSWORD                                             */}
+                        {/* ================================================== */}
 
                         <div>
 
-                            <div className="
-                                mb-2
-                                flex
-                                items-center
-                                justify-between
-                            ">
-
-                                <label
-                                    htmlFor="password"
-                                    className="
-                                        text-sm
-                                        font-semibold
-                                        text-slate-700
-                                    "
-                                >
-                                    Password
-                                </label>
-
-                            </div>
+                            <label
+                                htmlFor="password"
+                                className="
+                                    mb-2
+                                    block
+                                    text-sm
+                                    font-semibold
+                                    text-slate-700
+                                "
+                            >
+                                Password
+                            </label>
 
 
                             <div className="relative">
+
+                                {/* Password Icon */}
 
                                 <LockKeyhole
                                     size={18}
@@ -396,10 +513,16 @@ function Login() {
                                 />
 
 
+                                {/* Password Input */}
+
                                 <input
                                     id="password"
                                     name="password"
-                                    type={showPassword ? "text" : "password"}
+                                    type={
+                                        showPassword
+                                            ? "text"
+                                            : "password"
+                                    }
                                     value={formData.password}
                                     onChange={handleChange}
                                     placeholder="Enter your password"
@@ -417,28 +540,40 @@ function Login() {
                                         text-sm
                                         text-slate-800
                                         outline-none
-                                        transition
+                                        transition-all
                                         placeholder:text-slate-400
+                                        hover:border-slate-300
                                         focus:border-blue-500
                                         focus:ring-4
                                         focus:ring-blue-50
+                                        disabled:cursor-not-allowed
                                         disabled:bg-slate-50
                                     "
                                 />
 
 
+                                {/* Show / Hide Password */}
+
                                 <button
                                     type="button"
                                     onClick={() =>
-                                        setShowPassword(!showPassword)
+                                        setShowPassword(
+                                            (previous) => !previous
+                                        )
+                                    }
+                                    disabled={loading}
+                                    aria-label={
+                                        showPassword
+                                            ? "Hide password"
+                                            : "Show password"
                                     }
                                     className="
                                         absolute
                                         right-2
                                         top-1/2
                                         flex
-                                        h-8
-                                        w-8
+                                        h-9
+                                        w-9
                                         -translate-y-1/2
                                         items-center
                                         justify-center
@@ -447,12 +582,8 @@ function Login() {
                                         transition
                                         hover:bg-slate-100
                                         hover:text-slate-600
+                                        disabled:cursor-not-allowed
                                     "
-                                    aria-label={
-                                        showPassword
-                                            ? "Hide password"
-                                            : "Show password"
-                                    }
                                 >
 
                                     {showPassword ? (
@@ -468,7 +599,9 @@ function Login() {
                         </div>
 
 
-                        {/* Submit */}
+                        {/* ================================================== */}
+                        {/* LOGIN BUTTON                                        */}
+                        {/* ================================================== */}
 
                         <button
                             type="submit"
@@ -486,10 +619,12 @@ function Login() {
                                 text-sm
                                 font-bold
                                 text-white
-                                shadow-lg
+                                shadow-md
                                 shadow-blue-200
-                                transition
+                                transition-all
+                                duration-200
                                 hover:bg-blue-700
+                                hover:shadow-lg
                                 active:scale-[0.99]
                                 disabled:cursor-not-allowed
                                 disabled:opacity-60
@@ -497,24 +632,37 @@ function Login() {
                         >
 
                             {loading ? (
-                                <>
-                                    <span className="
-                                        h-4
-                                        w-4
-                                        animate-spin
-                                        rounded-full
-                                        border-2
-                                        border-white/40
-                                        border-t-white
-                                    " />
 
-                                    Signing in...
-                                </>
-                            ) : (
                                 <>
-                                    Sign in
+                                    {/* Loading Spinner */}
+
+                                    <span
+                                        className="
+                                            h-4
+                                            w-4
+                                            animate-spin
+                                            rounded-full
+                                            border-2
+                                            border-white/40
+                                            border-t-white
+                                        "
+                                    />
+
+                                    <span>
+                                        Signing in...
+                                    </span>
+                                </>
+
+                            ) : (
+
+                                <>
+                                    <span>
+                                        Sign in
+                                    </span>
+
                                     <ArrowRight size={17} />
                                 </>
+
                             )}
 
                         </button>
@@ -522,20 +670,26 @@ function Login() {
                     </form>
 
 
-                    {/* Register */}
+                    {/* ================================================== */}
+                    {/* REGISTER SECTION                                    */}
+                    {/* ================================================== */}
 
-                    <div className="
-                        mt-6
-                        border-t
-                        border-slate-100
-                        pt-6
-                        text-center
-                    ">
+                    <div
+                        className="
+                            mt-6
+                            border-t
+                            border-slate-100
+                            pt-6
+                            text-center
+                        "
+                    >
 
-                        <p className="
-                            text-sm
-                            text-slate-500
-                        ">
+                        <p
+                            className="
+                                text-sm
+                                text-slate-500
+                            "
+                        >
                             Don't have an account?
                         </p>
 
@@ -548,7 +702,9 @@ function Login() {
                                 text-sm
                                 font-bold
                                 text-blue-600
+                                transition
                                 hover:text-blue-700
+                                hover:underline
                             "
                         >
                             Create your account
@@ -559,32 +715,39 @@ function Login() {
                 </div>
 
 
-                {/* Security */}
+                {/* ================================================== */}
+                {/* SECURITY STATUS                                   */}
+                {/* ================================================== */}
 
-                <div className="
-                    mt-5
-                    flex
-                    items-center
-                    justify-center
-                    gap-2
-                    text-xs
-                    text-slate-400
-                ">
+                <div
+                    className="
+                        mt-5
+                        flex
+                        items-center
+                        justify-center
+                        gap-2
+                        text-xs
+                        text-slate-400
+                    "
+                >
 
                     <CheckCircle2
                         size={14}
                         className="text-emerald-500"
                     />
 
-                    Secure authentication
+                    <span>
+                        Secure authentication
+                    </span>
 
                 </div>
 
 
-                <div className="
-                    mt-4
-                    text-center
-                ">
+                {/* ================================================== */}
+                {/* BACK TO HOME                                       */}
+                {/* ================================================== */}
+
+                <div className="mt-4 text-center">
 
                     <Link
                         to="/"
@@ -592,6 +755,7 @@ function Login() {
                             text-xs
                             font-medium
                             text-slate-400
+                            transition
                             hover:text-blue-600
                         "
                     >

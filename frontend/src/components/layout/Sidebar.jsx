@@ -11,6 +11,10 @@ import {
 } from "lucide-react"
 
 
+// ======================================================
+// SIDEBAR NAVIGATION ITEMS
+// ======================================================
+
 const navigationItems = [
     {
         name: "Dashboard",
@@ -52,7 +56,6 @@ function Sidebar() {
         <aside
             className="
                 hidden
-                min-h-[calc(100vh-76px)]
                 w-64
                 shrink-0
                 border-r
@@ -62,52 +65,37 @@ function Sidebar() {
             "
         >
 
-            <div className="flex h-full flex-col">
+            {/* ================================================== */}
+            {/* SIDEBAR CONTAINER                                  */}
+            {/* ================================================== */}
 
+            <div
+                className="
+                    sticky
+                    top-[76px]
+                    flex
+                    h-[calc(100vh-76px)]
+                    flex-col
+                    overflow-y-auto
+                "
+            >
 
-                {/* ================================= */}
-                {/* SIDEBAR HEADER */}
-                {/* ================================= */}
-
-                <div className="border-b border-slate-100 px-5 py-6">
-
-                    <div className="flex items-center gap-3">
+                {/* ================================================== */}
+                {/* SIDEBAR BRAND SECTION                              */}
+                {/* ================================================== */}
  
 
 
- 
+                {/* ================================================== */}
+                {/* NAVIGATION                                          */}
+                {/* ================================================== */}
 
-                    </div>
-
-                </div>
-
-
-                {/* ================================= */}
-                {/* NAVIGATION TITLE */}
-                {/* ================================= */}
-
-                <div className="px-5 pb-2 pt-6">
-
-                    <p
-                        className="
-                            text-[10px]
-                            font-bold
-                            uppercase
-                            tracking-[0.18em]
-                            text-slate-400
-                        "
-                    >
-                        Main Menu
-                    </p>
-
-                </div>
-
-
-                {/* ================================= */}
-                {/* NAVIGATION */}
-                {/* ================================= */}
-
-                <nav className="space-y-1.5 px-3">
+                <nav
+                    className="
+                        space-y-1
+                        px-3
+                    "
+                >
 
                     {navigationItems.map((item) => {
 
@@ -122,11 +110,13 @@ function Sidebar() {
                                     `
                                         group
                                         flex
+                                        min-h-12
                                         items-center
                                         gap-3
                                         rounded-xl
+                                        border
                                         px-3
-                                        py-3
+                                        py-2.5
                                         text-sm
                                         font-semibold
                                         transition-all
@@ -134,13 +124,16 @@ function Sidebar() {
                                         ${
                                             isActive
                                                 ? `
+                                                    border-blue-600
                                                     bg-blue-600
                                                     text-white
                                                     shadow-sm
                                                     shadow-blue-200
                                                 `
                                                 : `
+                                                    border-transparent
                                                     text-slate-600
+                                                    hover:border-slate-200
                                                     hover:bg-slate-50
                                                     hover:text-blue-600
                                                 `
@@ -153,22 +146,25 @@ function Sidebar() {
 
                                     <>
 
-                                        {/* Icon */}
+                                        {/* ================================================== */}
+                                        {/* NAVIGATION ICON                                     */}
+                                        {/* ================================================== */}
 
                                         <div
                                             className={`
                                                 flex
-                                                h-8
-                                                w-8
+                                                h-9
+                                                w-9
                                                 shrink-0
                                                 items-center
                                                 justify-center
                                                 rounded-lg
-                                                transition
+                                                transition-all
+                                                duration-200
                                                 ${
                                                     isActive
                                                         ? "bg-white/15"
-                                                        : "bg-slate-50 group-hover:bg-blue-50"
+                                                        : "bg-slate-100 group-hover:bg-blue-50"
                                                 }
                                             `}
                                         >
@@ -176,24 +172,36 @@ function Sidebar() {
                                             <Icon
                                                 size={18}
                                                 strokeWidth={
-                                                    isActive ? 2.3 : 2
+                                                    isActive
+                                                        ? 2.3
+                                                        : 2
                                                 }
                                             />
 
                                         </div>
 
 
-                                        {/* Label */}
+                                        {/* ================================================== */}
+                                        {/* NAVIGATION LABEL                                    */}
+                                        {/* ================================================== */}
 
-                                        <span className="min-w-0 flex-1 truncate">
+                                        <span
+                                            className="
+                                                min-w-0
+                                                flex-1
+                                                truncate
+                                            "
+                                        >
                                             {item.name}
                                         </span>
 
 
-                                        {/* Active / Hover Arrow */}
+                                        {/* ================================================== */}
+                                        {/* ACTIVE / HOVER ARROW                               */}
+                                        {/* ================================================== */}
 
                                         <ChevronRight
-                                            size={15}
+                                            size={16}
                                             className={`
                                                 shrink-0
                                                 transition-all
@@ -219,11 +227,16 @@ function Sidebar() {
                 </nav>
 
 
-                {/* ================================= */}
-                {/* BOTTOM SECURITY CARD */}
-                {/* ================================= */}
+                {/* ================================================== */}
+                {/* BOTTOM SECURITY CARD                                */}
+                {/* ================================================== */}
 
-                <div className="mt-auto p-4">
+                <div
+                    className="
+                        mt-auto
+                        p-4
+                    "
+                >
 
                     <div
                         className="
@@ -232,12 +245,24 @@ function Sidebar() {
                             border-blue-100
                             bg-gradient-to-br
                             from-blue-50
+                            via-white
                             to-slate-50
                             p-4
+                            shadow-sm
                         "
                     >
 
-                        <div className="flex items-start gap-3">
+                        {/* Security Header */}
+
+                        <div
+                            className="
+                                flex
+                                items-start
+                                gap-3
+                            "
+                        >
+
+                            {/* Security Icon */}
 
                             <div
                                 className="
@@ -248,6 +273,8 @@ function Sidebar() {
                                     items-center
                                     justify-center
                                     rounded-xl
+                                    border
+                                    border-blue-100
                                     bg-white
                                     text-blue-600
                                     shadow-sm
@@ -259,17 +286,68 @@ function Sidebar() {
                             </div>
 
 
+                            {/* Security Text */}
+
                             <div className="min-w-0">
 
-                                <p className="text-xs font-bold text-slate-700">
+                                <p
+                                    className="
+                                        text-xs
+                                        font-bold
+                                        text-slate-700
+                                    "
+                                >
                                     Secure Banking
                                 </p>
 
-                                <p className="mt-1 text-[11px] leading-5 text-slate-500">
+                                <p
+                                    className="
+                                        mt-1
+                                        text-[11px]
+                                        leading-5
+                                        text-slate-500
+                                    "
+                                >
                                     Your banking experience is protected.
                                 </p>
 
                             </div>
+
+                        </div>
+
+
+                        {/* Security Status */}
+
+                        <div
+                            className="
+                                mt-3
+                                flex
+                                items-center
+                                gap-2
+                                border-t
+                                border-blue-100
+                                pt-3
+                            "
+                        >
+
+                            <span
+                                className="
+                                    h-2
+                                    w-2
+                                    rounded-full
+                                    bg-emerald-500
+                                "
+                            />
+
+                            <span
+                                className="
+                                    text-[10px]
+                                    font-semibold
+                                    text-slate-500
+                                "
+                            >
+                                System protected
+                            </span>
 
                         </div>
 
@@ -282,7 +360,7 @@ function Sidebar() {
         </aside>
 
     )
-
 }
+
 
 export default Sidebar

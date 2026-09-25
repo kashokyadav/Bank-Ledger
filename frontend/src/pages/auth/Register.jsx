@@ -17,7 +17,16 @@ import { registerUser } from "../../services/auth.service"
 
 function Register() {
 
+    // ======================================================
+    // ROUTER
+    // ======================================================
+
     const navigate = useNavigate()
+
+
+    // ======================================================
+    // FORM STATE
+    // ======================================================
 
     const [formData, setFormData] = useState({
         name: "",
@@ -25,21 +34,35 @@ function Register() {
         password: "",
     })
 
+
+    // Controls password visibility.
     const [showPassword, setShowPassword] = useState(false)
+
+    // Controls registration loading state.
     const [loading, setLoading] = useState(false)
+
+    // Stores registration error.
     const [error, setError] = useState("")
+
+    // Stores successful registration message.
     const [success, setSuccess] = useState("")
 
+
+    // ======================================================
+    // HANDLE INPUT CHANGE
+    // ======================================================
 
     function handleChange(event) {
 
         const { name, value } = event.target
 
+        // Update the changed form field.
         setFormData((previous) => ({
             ...previous,
             [name]: value,
         }))
 
+        // Clear previous messages while typing.
         if (error) {
             setError("")
         }
@@ -50,31 +73,38 @@ function Register() {
     }
 
 
+    // ======================================================
+    // HANDLE REGISTRATION
+    // ======================================================
+
     async function handleSubmit(event) {
 
+        // Prevent browser page refresh.
         event.preventDefault()
 
+        // Clear previous messages.
         setError("")
         setSuccess("")
 
+
+        // ----------------------------------------------
+        // Basic validation
+        // ----------------------------------------------
 
         if (!formData.name.trim()) {
             setError("Please enter your name.")
             return
         }
 
-
         if (!formData.email.trim()) {
             setError("Please enter your email address.")
             return
         }
 
-
         if (!formData.password) {
             setError("Please enter a password.")
             return
         }
-
 
         if (formData.password.length < 6) {
             setError("Password must be at least 6 characters.")
@@ -84,124 +114,171 @@ function Register() {
 
         try {
 
+            // Start loading state.
             setLoading(true)
 
+            // Send registration request to backend.
             await registerUser(formData)
 
+            // Show success message.
             setSuccess(
                 "Your account has been created successfully."
             )
 
+            // Redirect to login after a short delay.
             setTimeout(() => {
                 navigate("/login")
             }, 900)
 
         } catch (error) {
 
+            // Use backend error message when available.
             const message =
                 error?.response?.data?.message ||
                 "Unable to create your account. Please try again."
 
+            // Display error.
             setError(message)
 
         } finally {
 
+            // Stop loading state.
             setLoading(false)
 
         }
     }
 
 
+    // ======================================================
+    // UI
+    // ======================================================
+
     return (
-        <div className="
-            min-h-screen
-            bg-slate-50
-            px-4
-            py-6
-            sm:px-6
-            sm:py-10
-            lg:px-8
-        ">
 
-            {/* Background */}
-
-            <div className="
-                pointer-events-none
-                fixed
-                left-1/2
-                top-0
-                -z-0
-                h-72
-                w-72
-                -translate-x-1/2
-                rounded-full
-                bg-blue-100/60
-                blur-3xl
-                sm:h-96
-                sm:w-96
-            " />
-
-
-            <div className="
-                relative
-                z-10
-                mx-auto
+        <div
+            className="
                 flex
-                min-h-[calc(100vh-3rem)]
-                w-full
-                max-w-md
-                flex-col
+                min-h-[calc(100vh-72px)]
+                items-center
                 justify-center
-            ">
+                bg-slate-50
+                px-4
+                py-8
+                sm:px-6
+                sm:py-10
+                lg:px-8
+            "
+        >
 
-                {/* Logo */}
+            {/* ================================================== */}
+            {/* BACKGROUND DECORATION                              */}
+            {/* ================================================== */}
 
-                <div className="mb-7 text-center">
+            <div
+                className="
+                    pointer-events-none
+                    fixed
+                    left-1/2
+                    top-0
+                    -z-0
+                    h-64
+                    w-64
+                    -translate-x-1/2
+                    rounded-full
+                    bg-blue-100/60
+                    blur-3xl
+                    sm:h-96
+                    sm:w-96
+                "
+            />
+
+
+            {/* ================================================== */}
+            {/* REGISTER CONTAINER                                 */}
+            {/* ================================================== */}
+
+            <div
+                className="
+                    relative
+                    z-10
+                    w-full
+                    max-w-md
+                "
+            >
+
+                {/* ================================================== */}
+                {/* BRAND                                               */}
+                {/* ================================================== */}
+
+                <div
+                    className="
+                        mb-6
+                        flex
+                        justify-center
+                    "
+                >
 
                     <Link
                         to="/"
                         className="
-                            inline-flex
+                            group
+                            flex
                             items-center
                             gap-3
                         "
                     >
 
-                        <div className="
-                            flex
-                            h-11
-                            w-11
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-blue-600
-                            text-white
-                            shadow-lg
-                            shadow-blue-200
-                        ">
+                        {/* Brand Logo */}
+
+                        <div
+                            className="
+                                flex
+                                h-11
+                                w-11
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-xl
+                                bg-blue-600
+                                text-white
+                                shadow-md
+                                shadow-blue-200
+                                transition
+                                duration-200
+                                group-hover:bg-blue-700
+                            "
+                        >
+
                             <ShieldCheck
                                 size={22}
                                 strokeWidth={2.3}
                             />
+
                         </div>
 
 
+                        {/* Brand Text */}
+
                         <div className="text-left">
 
-                            <p className="
-                                text-sm
-                                font-extrabold
-                                tracking-[0.14em]
-                                text-slate-900
-                            ">
+                            <p
+                                className="
+                                    text-sm
+                                    font-extrabold
+                                    tracking-[0.14em]
+                                    text-slate-900
+                                "
+                            >
                                 BANK-LEDGER
                             </p>
 
-                            <p className="
-                                text-[11px]
-                                font-medium
-                                text-slate-400
-                            ">
+                            <p
+                                className="
+                                    text-[11px]
+                                    font-medium
+                                    text-slate-400
+                                "
+                            >
                                 Modern digital banking
                             </p>
 
@@ -212,55 +289,72 @@ function Register() {
                 </div>
 
 
-                {/* Register card */}
+                {/* ================================================== */}
+                {/* REGISTER CARD                                      */}
+                {/* ================================================== */}
 
-                <div className="
-                    rounded-3xl
-                    border
-                    border-slate-200
-                    bg-white
-                    p-5
-                    shadow-xl
-                    shadow-slate-200/60
-                    sm:p-7
-                ">
+                <div
+                    className="
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-white
+                        p-5
+                        shadow-lg
+                        shadow-slate-200/60
+                        sm:rounded-3xl
+                        sm:p-7
+                    "
+                >
 
-                    {/* Heading */}
+                    {/* ================================================== */}
+                    {/* HEADING                                            */}
+                    {/* ================================================== */}
 
-                    <div className="mb-7">
+                    <div className="mb-6">
 
-                        <div className="
-                            mb-4
-                            flex
-                            h-11
-                            w-11
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-blue-50
-                            text-blue-600
-                        ">
+                        {/* User Icon */}
+
+                        <div
+                            className="
+                                mb-4
+                                flex
+                                h-11
+                                w-11
+                                items-center
+                                justify-center
+                                rounded-xl
+                                bg-blue-50
+                                text-blue-600
+                            "
+                        >
+
                             <UserRound size={21} />
+
                         </div>
 
 
-                        <h1 className="
-                            text-2xl
-                            font-black
-                            tracking-tight
-                            text-slate-900
-                            sm:text-3xl
-                        ">
+                        <h1
+                            className="
+                                text-2xl
+                                font-black
+                                tracking-tight
+                                text-slate-900
+                                sm:text-3xl
+                            "
+                        >
                             Create your account
                         </h1>
 
 
-                        <p className="
-                            mt-2
-                            text-sm
-                            leading-6
-                            text-slate-500
-                        ">
+                        <p
+                            className="
+                                mt-2
+                                text-sm
+                                leading-6
+                                text-slate-500
+                            "
+                        >
                             Join BANK-LEDGER and manage your banking
                             securely from one place.
                         </p>
@@ -268,36 +362,49 @@ function Register() {
                     </div>
 
 
-                    {/* Error */}
+                    {/* ================================================== */}
+                    {/* ERROR MESSAGE                                      */}
+                    {/* ================================================== */}
 
                     {error && (
 
-                        <div className="
-                            mb-5
-                            flex
-                            items-start
-                            gap-3
-                            rounded-xl
-                            border
-                            border-red-200
-                            bg-red-50
-                            p-3.5
-                        ">
+                        <div
+                            role="alert"
+                            className="
+                                mb-5
+                                flex
+                                items-start
+                                gap-3
+                                rounded-xl
+                                border
+                                border-red-200
+                                bg-red-50
+                                p-3.5
+                            "
+                        >
 
-                            <div className="
-                                mt-0.5
-                                h-2
-                                w-2
-                                shrink-0
-                                rounded-full
-                                bg-red-500
-                            " />
+                            {/* Error Indicator */}
 
-                            <p className="
-                                text-sm
-                                leading-5
-                                text-red-700
-                            ">
+                            <span
+                                className="
+                                    mt-1.5
+                                    h-2
+                                    w-2
+                                    shrink-0
+                                    rounded-full
+                                    bg-red-500
+                                "
+                            />
+
+                            {/* Error Text */}
+
+                            <p
+                                className="
+                                    text-sm
+                                    leading-5
+                                    text-red-700
+                                "
+                            >
                                 {error}
                             </p>
 
@@ -306,21 +413,26 @@ function Register() {
                     )}
 
 
-                    {/* Success */}
+                    {/* ================================================== */}
+                    {/* SUCCESS MESSAGE                                    */}
+                    {/* ================================================== */}
 
                     {success && (
 
-                        <div className="
-                            mb-5
-                            flex
-                            items-start
-                            gap-3
-                            rounded-xl
-                            border
-                            border-emerald-200
-                            bg-emerald-50
-                            p-3.5
-                        ">
+                        <div
+                            role="status"
+                            className="
+                                mb-5
+                                flex
+                                items-start
+                                gap-3
+                                rounded-xl
+                                border
+                                border-emerald-200
+                                bg-emerald-50
+                                p-3.5
+                            "
+                        >
 
                             <CheckCircle2
                                 size={18}
@@ -331,11 +443,13 @@ function Register() {
                                 "
                             />
 
-                            <p className="
-                                text-sm
-                                leading-5
-                                text-emerald-700
-                            ">
+                            <p
+                                className="
+                                    text-sm
+                                    leading-5
+                                    text-emerald-700
+                                "
+                            >
                                 {success}
                             </p>
 
@@ -344,14 +458,18 @@ function Register() {
                     )}
 
 
-                    {/* Form */}
+                    {/* ================================================== */}
+                    {/* REGISTRATION FORM                                  */}
+                    {/* ================================================== */}
 
                     <form
                         onSubmit={handleSubmit}
                         className="space-y-5"
                     >
 
-                        {/* Name */}
+                        {/* ================================================== */}
+                        {/* NAME                                               */}
+                        {/* ================================================== */}
 
                         <div>
 
@@ -371,6 +489,8 @@ function Register() {
 
                             <div className="relative">
 
+                                {/* Name Icon */}
+
                                 <UserRound
                                     size={18}
                                     className="
@@ -383,6 +503,8 @@ function Register() {
                                     "
                                 />
 
+
+                                {/* Name Input */}
 
                                 <input
                                     id="name"
@@ -405,11 +527,13 @@ function Register() {
                                         text-sm
                                         text-slate-800
                                         outline-none
-                                        transition
+                                        transition-all
                                         placeholder:text-slate-400
+                                        hover:border-slate-300
                                         focus:border-blue-500
                                         focus:ring-4
                                         focus:ring-blue-50
+                                        disabled:cursor-not-allowed
                                         disabled:bg-slate-50
                                     "
                                 />
@@ -419,7 +543,9 @@ function Register() {
                         </div>
 
 
-                        {/* Email */}
+                        {/* ================================================== */}
+                        {/* EMAIL                                              */}
+                        {/* ================================================== */}
 
                         <div>
 
@@ -439,6 +565,8 @@ function Register() {
 
                             <div className="relative">
 
+                                {/* Email Icon */}
+
                                 <Mail
                                     size={18}
                                     className="
@@ -451,6 +579,8 @@ function Register() {
                                     "
                                 />
 
+
+                                {/* Email Input */}
 
                                 <input
                                     id="email"
@@ -473,11 +603,13 @@ function Register() {
                                         text-sm
                                         text-slate-800
                                         outline-none
-                                        transition
+                                        transition-all
                                         placeholder:text-slate-400
+                                        hover:border-slate-300
                                         focus:border-blue-500
                                         focus:ring-4
                                         focus:ring-blue-50
+                                        disabled:cursor-not-allowed
                                         disabled:bg-slate-50
                                     "
                                 />
@@ -487,7 +619,9 @@ function Register() {
                         </div>
 
 
-                        {/* Password */}
+                        {/* ================================================== */}
+                        {/* PASSWORD                                            */}
+                        {/* ================================================== */}
 
                         <div>
 
@@ -507,6 +641,8 @@ function Register() {
 
                             <div className="relative">
 
+                                {/* Password Icon */}
+
                                 <LockKeyhole
                                     size={18}
                                     className="
@@ -519,6 +655,8 @@ function Register() {
                                     "
                                 />
 
+
+                                {/* Password Input */}
 
                                 <input
                                     id="password"
@@ -545,28 +683,40 @@ function Register() {
                                         text-sm
                                         text-slate-800
                                         outline-none
-                                        transition
+                                        transition-all
                                         placeholder:text-slate-400
+                                        hover:border-slate-300
                                         focus:border-blue-500
                                         focus:ring-4
                                         focus:ring-blue-50
+                                        disabled:cursor-not-allowed
                                         disabled:bg-slate-50
                                     "
                                 />
 
 
+                                {/* Show / Hide Password */}
+
                                 <button
                                     type="button"
                                     onClick={() =>
-                                        setShowPassword(!showPassword)
+                                        setShowPassword(
+                                            (previous) => !previous
+                                        )
+                                    }
+                                    disabled={loading}
+                                    aria-label={
+                                        showPassword
+                                            ? "Hide password"
+                                            : "Show password"
                                     }
                                     className="
                                         absolute
                                         right-2
                                         top-1/2
                                         flex
-                                        h-8
-                                        w-8
+                                        h-9
+                                        w-9
                                         -translate-y-1/2
                                         items-center
                                         justify-center
@@ -575,12 +725,8 @@ function Register() {
                                         transition
                                         hover:bg-slate-100
                                         hover:text-slate-600
+                                        disabled:cursor-not-allowed
                                     "
-                                    aria-label={
-                                        showPassword
-                                            ? "Hide password"
-                                            : "Show password"
-                                    }
                                 >
 
                                     {showPassword ? (
@@ -594,18 +740,24 @@ function Register() {
                             </div>
 
 
-                            <p className="
-                                mt-2
-                                text-xs
-                                text-slate-400
-                            ">
+                            {/* Password Requirement */}
+
+                            <p
+                                className="
+                                    mt-2
+                                    text-xs
+                                    text-slate-400
+                                "
+                            >
                                 Use at least 6 characters.
                             </p>
 
                         </div>
 
 
-                        {/* Submit */}
+                        {/* ================================================== */}
+                        {/* CREATE ACCOUNT BUTTON                              */}
+                        {/* ================================================== */}
 
                         <button
                             type="submit"
@@ -623,10 +775,12 @@ function Register() {
                                 text-sm
                                 font-bold
                                 text-white
-                                shadow-lg
+                                shadow-md
                                 shadow-blue-200
-                                transition
+                                transition-all
+                                duration-200
                                 hover:bg-blue-700
+                                hover:shadow-lg
                                 active:scale-[0.99]
                                 disabled:cursor-not-allowed
                                 disabled:opacity-60
@@ -634,24 +788,37 @@ function Register() {
                         >
 
                             {loading ? (
-                                <>
-                                    <span className="
-                                        h-4
-                                        w-4
-                                        animate-spin
-                                        rounded-full
-                                        border-2
-                                        border-white/40
-                                        border-t-white
-                                    " />
 
-                                    Creating account...
-                                </>
-                            ) : (
                                 <>
-                                    Create account
+                                    {/* Loading Spinner */}
+
+                                    <span
+                                        className="
+                                            h-4
+                                            w-4
+                                            animate-spin
+                                            rounded-full
+                                            border-2
+                                            border-white/40
+                                            border-t-white
+                                        "
+                                    />
+
+                                    <span>
+                                        Creating account...
+                                    </span>
+                                </>
+
+                            ) : (
+
+                                <>
+                                    <span>
+                                        Create account
+                                    </span>
+
                                     <ArrowRight size={17} />
                                 </>
+
                             )}
 
                         </button>
@@ -659,20 +826,26 @@ function Register() {
                     </form>
 
 
-                    {/* Login */}
+                    {/* ================================================== */}
+                    {/* LOGIN LINK                                         */}
+                    {/* ================================================== */}
 
-                    <div className="
-                        mt-6
-                        border-t
-                        border-slate-100
-                        pt-6
-                        text-center
-                    ">
+                    <div
+                        className="
+                            mt-6
+                            border-t
+                            border-slate-100
+                            pt-6
+                            text-center
+                        "
+                    >
 
-                        <p className="
-                            text-sm
-                            text-slate-500
-                        ">
+                        <p
+                            className="
+                                text-sm
+                                text-slate-500
+                            "
+                        >
                             Already have an account?
                         </p>
 
@@ -685,7 +858,9 @@ function Register() {
                                 text-sm
                                 font-bold
                                 text-blue-600
+                                transition
                                 hover:text-blue-700
+                                hover:underline
                             "
                         >
                             Sign in to your account
@@ -696,32 +871,39 @@ function Register() {
                 </div>
 
 
-                {/* Security */}
+                {/* ================================================== */}
+                {/* SECURITY STATUS                                    */}
+                {/* ================================================== */}
 
-                <div className="
-                    mt-5
-                    flex
-                    items-center
-                    justify-center
-                    gap-2
-                    text-xs
-                    text-slate-400
-                ">
+                <div
+                    className="
+                        mt-5
+                        flex
+                        items-center
+                        justify-center
+                        gap-2
+                        text-xs
+                        text-slate-400
+                    "
+                >
 
                     <CheckCircle2
                         size={14}
                         className="text-emerald-500"
                     />
 
-                    Secure account registration
+                    <span>
+                        Secure account registration
+                    </span>
 
                 </div>
 
 
-                <div className="
-                    mt-4
-                    text-center
-                ">
+                {/* ================================================== */}
+                {/* BACK TO HOME                                        */}
+                {/* ================================================== */}
+
+                <div className="mt-4 text-center">
 
                     <Link
                         to="/"
@@ -729,6 +911,7 @@ function Register() {
                             text-xs
                             font-medium
                             text-slate-400
+                            transition
                             hover:text-blue-600
                         "
                     >
